@@ -8,46 +8,19 @@ import { supabase } from '@/lib/supabase'
 function AuthForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/my-items'
-  const { signIn, signUp, user } = useAuth()
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
+  const { signIn, user } = useAuth()
 
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [signupSuccess, setSignupSuccess] = useState(false)
-  const [oauthLoading, setOauthLoading] = useState<string | null>(null)
   const [resetSent, setResetSent] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
 
-  // If already logged in, redirect
   if (user) {
     router.push(redirectTo)
     return null
-  }
-
-  async function handleOAuth(provider: 'google' | 'apple') {
-    setError(null)
-    setOauthLoading(provider)
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}${redirectTo}`,
-        },
-      })
-
-      if (error) {
-        setError(error.message)
-        setOauthLoading(null)
-      }
-    } catch {
-      setError('Something went wrong. Try again.')
-      setOauthLoading(null)
-    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -55,33 +28,12 @@ function AuthForm() {
     setError(null)
     setIsSubmitting(true)
 
-    if (mode === 'signup' && password !== confirmPassword) {
-      setError('Passwords do not match')
-      setIsSubmitting(false)
-      return
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      setIsSubmitting(false)
-      return
-    }
-
     try {
-      if (mode === 'signup') {
-        const { error } = await signUp(email, password)
-        if (error) {
-          setError(error)
-        } else {
-          setSignupSuccess(true)
-        }
+      const { error } = await signIn(email, password)
+      if (error) {
+        setError(error)
       } else {
-        const { error } = await signIn(email, password)
-        if (error) {
-          setError(error)
-        } else {
-          router.push(redirectTo)
-        }
+        router.push(redirectTo)
       }
     } catch {
       setError('Something went wrong. Try again.')
@@ -92,7 +44,7 @@ function AuthForm() {
 
   async function handleForgotPassword() {
     if (!email) {
-      setError('Enter your email address first, then click Forgot Password')
+      setError('Enter your email first, then click forgot password.')
       return
     }
     setError(null)
@@ -115,46 +67,22 @@ function AuthForm() {
 
   if (resetSent) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
-        <div className="max-w-md w-full card-static p-8 text-center animate-fade-in">
-          <div className="text-5xl mb-4">🔑</div>
-          <h1 className="text-2xl font-bold text-text-primary mb-2">Check Your Email</h1>
-          <p className="text-text-secondary mb-6">
-            We sent a password reset link to <span className="text-text-primary font-medium">{email}</span>.
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#0a0f1e' }}>
+        <div className="max-w-sm w-full text-center">
+          <p style={{ color: '#4ecdc4' }} className="text-sm font-medium tracking-widest uppercase mb-4">
+            Check your email
+          </p>
+          <p style={{ color: '#7a8ba6' }} className="text-sm leading-relaxed mb-8">
+            We sent a password reset link to{' '}
+            <span className="text-white font-medium">{email}</span>.
             Click the link to set a new password.
           </p>
           <button
-            onClick={() => {
-              setResetSent(false)
-              setMode('signin')
-            }}
-            className="text-accent hover:text-accent-secondary text-sm transition-colors"
+            onClick={() => setResetSent(false)}
+            style={{ color: '#4ecdc4' }}
+            className="text-sm hover:opacity-80 transition-opacity"
           >
-            Back to Sign In
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  if (signupSuccess) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
-        <div className="max-w-md w-full card-static p-8 text-center animate-fade-in">
-          <div className="text-5xl mb-4">📬</div>
-          <h1 className="text-2xl font-bold text-text-primary mb-2">Check Your Email</h1>
-          <p className="text-text-secondary mb-6">
-            We sent a confirmation link to <span className="text-text-primary font-medium">{email}</span>.
-            Click the link to activate your account.
-          </p>
-          <button
-            onClick={() => {
-              setSignupSuccess(false)
-              setMode('signin')
-            }}
-            className="text-accent hover:text-accent-secondary text-sm transition-colors"
-          >
-            Back to Sign In
+            Back to sign in
           </button>
         </div>
       </div>
@@ -162,84 +90,76 @@ function AuthForm() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
-      <div className="max-w-md w-full animate-fade-in">
-        <div className="text-center mb-8">
-          <span className="text-2xl font-extrabold tracking-tight text-text-primary inline-block mb-3">Slack Tide</span>
-          <p className="text-text-secondary">
-            {mode === 'signin' ? 'Sign in to your dashboard' : 'Create your account'}
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-4 relative"
+      style={{ background: '#0a0f1e' }}
+    >
+      {/* Faint water-like gradient overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 80% 50% at 50% 40%, rgba(78,205,196,0.04) 0%, transparent 70%)',
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, transparent 0%, rgba(78,205,196,0.02) 50%, transparent 100%)',
+        }}
+      />
+
+      <div className="relative z-10 w-full max-w-sm">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1
+            className="text-3xl font-bold tracking-tight mb-3"
+            style={{
+              color: '#e8edf4',
+              fontFamily: 'var(--font-plus-jakarta), system-ui, sans-serif',
+            }}
+          >
+            Slack Tide
+          </h1>
+          <p
+            className="text-sm tracking-wide"
+            style={{ color: '#5a6b82' }}
+          >
+            See what&apos;s beneath the surface.
           </p>
+
+          {/* Tide line divider */}
+          <div
+            className="mx-auto mt-6"
+            style={{
+              width: '100%',
+              maxWidth: '200px',
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(78,205,196,0.3), transparent)',
+            }}
+          />
         </div>
 
-        <div className="card-static p-6">
-          {/* OAuth buttons */}
-          <div className="space-y-3 mb-6">
-            <button
-              onClick={() => handleOAuth('google')}
-              disabled={oauthLoading !== null}
-              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-800 font-medium py-3 px-6 rounded-xl transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-              </svg>
-              {oauthLoading === 'google' ? 'Redirecting...' : 'Continue with Google'}
-            </button>
-
-            <button
-              onClick={() => handleOAuth('apple')}
-              disabled={oauthLoading !== null}
-              className="w-full flex items-center justify-center gap-3 bg-black hover:bg-gray-900 disabled:bg-gray-800 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors border border-gray-700"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-              </svg>
-              {oauthLoading === 'apple' ? 'Redirecting...' : 'Continue with Apple'}
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-border-default"></div>
-            <span className="text-text-tertiary text-sm">or</span>
-            <div className="flex-1 h-px bg-border-default"></div>
-          </div>
-
-          {/* Mode toggle */}
-          <div className="flex rounded-xl bg-bg-tertiary p-1 mb-6">
-            <button
-              onClick={() => { setMode('signin'); setError(null) }}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-                mode === 'signin'
-                  ? 'bg-bg-elevated text-text-primary shadow-sm'
-                  : 'text-text-tertiary hover:text-text-secondary'
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => { setMode('signup'); setError(null) }}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-                mode === 'signup'
-                  ? 'bg-bg-elevated text-text-primary shadow-sm'
-                  : 'text-text-tertiary hover:text-text-secondary'
-              }`}
-            >
-              Sign Up
-            </button>
-          </div>
-
+        {/* Form */}
+        <div className="space-y-5">
           {error && (
-            <div className="bg-error/10 border border-error/30 rounded-xl p-4 mb-4">
-              <p className="text-error text-sm">{error}</p>
+            <div
+              className="rounded-lg px-4 py-3 text-sm"
+              style={{
+                background: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.2)',
+                color: '#f87171',
+              }}
+            >
+              {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
+              <label
+                className="block text-xs font-medium uppercase tracking-wider mb-2"
+                style={{ color: '#5a6b82' }}
+              >
                 Email
               </label>
               <input
@@ -247,66 +167,100 @@ function AuthForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="input"
                 required
+                autoComplete="email"
+                className="w-full rounded-lg px-4 py-3 text-sm outline-none transition-all placeholder:opacity-30"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#e8edf4',
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(78,205,196,0.4)'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(78,205,196,0.08)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === 'signup' ? 'At least 6 characters' : 'Your password'}
-                className="input"
-                required
-              />
-            </div>
-
-            {mode === 'signin' && (
-              <div className="text-right -mt-2">
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  className="block text-xs font-medium uppercase tracking-wider"
+                  style={{ color: '#5a6b82' }}
+                >
+                  Password
+                </label>
                 <button
                   type="button"
                   onClick={handleForgotPassword}
                   disabled={resetLoading}
-                  className="text-accent hover:text-accent-secondary text-xs transition-colors"
+                  className="text-xs transition-opacity hover:opacity-80 disabled:opacity-40"
+                  style={{ color: '#4ecdc4' }}
                 >
-                  {resetLoading ? 'Sending...' : 'Forgot password?'}
+                  {resetLoading ? 'Sending...' : 'Forgot?'}
                 </button>
               </div>
-            )}
-
-            {mode === 'signup' && (
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  className="input"
-                  required
-                />
-              </div>
-            )}
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Your password"
+                required
+                autoComplete="current-password"
+                className="w-full rounded-lg px-4 py-3 text-sm outline-none transition-all placeholder:opacity-30"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#e8edf4',
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(78,205,196,0.4)'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(78,205,196,0.08)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              />
+            </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary w-full"
+              className="w-full rounded-lg py-3 text-sm font-semibold tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: isSubmitting ? 'rgba(78,205,196,0.15)' : 'rgba(78,205,196,0.12)',
+                color: '#4ecdc4',
+                border: '1px solid rgba(78,205,196,0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.background = 'rgba(78,205,196,0.2)'
+                  e.currentTarget.style.borderColor = 'rgba(78,205,196,0.35)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(78,205,196,0.12)'
+                e.currentTarget.style.borderColor = 'rgba(78,205,196,0.2)'
+              }}
             >
-              {isSubmitting
-                ? (mode === 'signin' ? 'Signing in...' : 'Creating account...')
-                : (mode === 'signin' ? 'Sign In' : 'Create Account')}
+              {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
         </div>
       </div>
+
+      {/* Footer */}
+      <p
+        className="absolute bottom-6 text-xs"
+        style={{ color: '#2a3548' }}
+      >
+        &copy; Slack Tide
+      </p>
     </div>
   )
 }
@@ -314,10 +268,16 @@ function AuthForm() {
 export default function AuthPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-bg-primary">
-        <div className="animate-pulse">
-          <span className="text-2xl font-extrabold tracking-tight text-text-primary">Slack Tide</span>
-        </div>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: '#0a0f1e' }}
+      >
+        <p
+          className="text-sm animate-pulse"
+          style={{ color: '#4ecdc4' }}
+        >
+          Slack Tide
+        </p>
       </div>
     }>
       <AuthForm />
