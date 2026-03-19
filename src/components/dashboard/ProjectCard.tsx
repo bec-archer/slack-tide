@@ -17,9 +17,10 @@ interface ProjectCardProps {
   project: Project
   features: Feature[]
   milestoneCount: number
+  isSubProject?: boolean
 }
 
-export default function ProjectCard({ project, features, milestoneCount }: ProjectCardProps) {
+export default function ProjectCard({ project, features, milestoneCount, isSubProject }: ProjectCardProps) {
   const active = features.filter((f) => f.status !== 'cut')
   const completed = active.filter((f) => f.status === 'done' || f.status === 'shipped').length
   const percentage = active.length > 0 ? Math.round((completed / active.length) * 100) : 0
@@ -31,7 +32,7 @@ export default function ProjectCard({ project, features, milestoneCount }: Proje
         style={{ borderLeftWidth: '3px', borderLeftColor: project.color }}
       >
         <div className="flex items-start justify-between gap-2 mb-3">
-          <h2 className="text-lg font-semibold text-text-primary">{project.name}</h2>
+          <h2 className={`${isSubProject ? 'text-base' : 'text-lg'} font-semibold text-text-primary`}>{project.name}</h2>
           <span className={`badge ${projectBadgeClass(project.status)} shrink-0`} style={{ fontFamily: 'var(--font-mono)' }}>
             {project.status}
           </span>
