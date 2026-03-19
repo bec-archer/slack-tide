@@ -11,6 +11,7 @@ export interface Project {
   description: string | null
   color: string
   status: ProjectStatus
+  parent_project_id?: string | null
   created_at: string
   updated_at: string
 }
