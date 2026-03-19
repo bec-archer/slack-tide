@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createBrowserClient } from '@/lib/supabase'
+import { createQrstkrClient } from '@/lib/supabase-qrstkr'
 
 interface AddMilestoneFormProps {
   projectId: string
@@ -18,7 +18,7 @@ export default function AddMilestoneForm({ projectId, sortOrder, onAdded }: AddM
     e.preventDefault()
     if (!name.trim()) return
     setSaving(true)
-    const supabase = createBrowserClient()
+    const supabase = createQrstkrClient()
     await supabase.from('milestones').insert({
       project_id: projectId,
       name: name.trim(),

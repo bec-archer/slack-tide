@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { createBrowserClient } from '@/lib/supabase'
+import { createQrstkrClient } from '@/lib/supabase-qrstkr'
 import { useAuth } from '@/contexts/AuthContext'
 import type { Project, Feature, Milestone } from '@/lib/dashboard-types'
 import ProjectCard from '@/components/dashboard/ProjectCard'
@@ -20,7 +20,7 @@ export default function DashboardPage() {
   const isAdmin = user?.email === ADMIN_EMAIL
 
   const fetchData = useCallback(async () => {
-    const supabase = createBrowserClient()
+    const supabase = createQrstkrClient()
     const [projectsRes, featuresRes, milestonesRes] = await Promise.all([
       supabase.from('projects').select('*').order('created_at', { ascending: false }),
       supabase.from('features').select('id, project_id, status'),
@@ -42,7 +42,7 @@ export default function DashboardPage() {
   }, [fetchData])
 
   useEffect(() => {
-    const supabase = createBrowserClient()
+    const supabase = createQrstkrClient()
     const channel = supabase
       .channel('dashboard-overview')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, fetchData)

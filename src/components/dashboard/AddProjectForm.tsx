@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createBrowserClient } from '@/lib/supabase'
+import { createQrstkrClient } from '@/lib/supabase-qrstkr'
 
 interface AddProjectFormProps {
   onAdded: () => void
@@ -24,7 +24,7 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
     e.preventDefault()
     if (!name.trim()) return
     setSaving(true)
-    const supabase = createBrowserClient()
+    const supabase = createQrstkrClient()
     await supabase.from('projects').insert({
       name: name.trim(),
       slug: generateSlug(name),

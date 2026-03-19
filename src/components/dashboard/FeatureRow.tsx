@@ -1,6 +1,6 @@
 'use client'
 
-import { createBrowserClient } from '@/lib/supabase'
+import { createQrstkrClient } from '@/lib/supabase-qrstkr'
 import type { Feature, FeatureStatus } from '@/lib/dashboard-types'
 import InlineEdit from './InlineEdit'
 import StatusDropdown from './StatusDropdown'
@@ -30,7 +30,7 @@ interface FeatureRowProps {
 }
 
 export default function FeatureRow({ feature, isAdmin, onRefresh }: FeatureRowProps) {
-  const supabase = createBrowserClient()
+  const supabase = createQrstkrClient()
 
   async function updateName(name: string) {
     await supabase.from('features').update({ name }).eq('id', feature.id)

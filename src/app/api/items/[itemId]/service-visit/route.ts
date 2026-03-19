@@ -108,26 +108,7 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to create service records', detail: insertError.message }, { status: 500 })
     }
 
-    // 10. Create notification for the item owner (if item has an owner)
-    if (item.owner_id) {
-      const recordCount = line_items.length
-      const itemDesc = [item.year, item.make, item.model].filter(Boolean).join(' ')
-
-      await supabase
-        .from('notifications')
-        .insert({
-          user_id: item.owner_id,
-          type: 'new_shop_submission',
-          title: `${shopName} logged ${recordCount} service record${recordCount > 1 ? 's' : ''}`,
-          body: `New service records for your ${itemDesc}`,
-          related_item_id: itemId,
-          related_record_id: insertedRecords?.[0]?.id || null,
-        })
-        // Don't fail the whole request if notification insert fails
-        .then(({ error: notifError }) => {
-          if (notifError) console.error('Notification insert error:', notifError)
-        })
-    }
+    // Notification insert removed — notifications table does not exist
 
     return NextResponse.json({
       visit_id: visitId,
