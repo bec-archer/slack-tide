@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { Project, Feature, ProjectStatus } from '@/lib/dashboard-types'
 import StatusDropdown from './StatusDropdown'
-import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import { createBrowserClient } from '@/lib/supabase'
 
 const PROJECT_STATUSES: ProjectStatus[] = ['active', 'paused', 'completed', 'archived']
 
@@ -29,7 +29,7 @@ export default function ProjectHeader({ project, features, isAdmin, onRefresh }:
   const percentage = active.length > 0 ? Math.round((completed / active.length) * 100) : 0
 
   async function updateStatus(status: ProjectStatus) {
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     await supabase.from('projects').update({ status }).eq('id', project.id)
     onRefresh()
   }

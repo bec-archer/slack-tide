@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import { createBrowserClient } from '@/lib/supabase'
 import type { FeaturePriority } from '@/lib/dashboard-types'
 
 interface AddFeatureFormProps {
@@ -22,7 +22,7 @@ export default function AddFeatureForm({ milestoneId, projectId, sortOrder, onAd
     e.preventDefault()
     if (!name.trim()) return
     setSaving(true)
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     await supabase.from('features').insert({
       milestone_id: milestoneId,
       project_id: projectId,

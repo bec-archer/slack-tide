@@ -1,6 +1,6 @@
 'use client'
 
-import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import { createBrowserClient } from '@/lib/supabase'
 import type { Milestone, Feature, MilestoneStatus } from '@/lib/dashboard-types'
 import InlineEdit from './InlineEdit'
 import StatusDropdown from './StatusDropdown'
@@ -38,7 +38,7 @@ interface MilestoneCardProps {
 }
 
 export default function MilestoneCard({ milestone, features, projectColor, isAdmin, onRefresh }: MilestoneCardProps) {
-  const supabase = createQrstkrClient()
+  const supabase = createBrowserClient()
   const progress = computeProgress(features)
   const sortedFeatures = [...features].sort((a, b) => a.sort_order - b.sort_order)
 

@@ -25,6 +25,30 @@ export default function ProjectCard({ project, features, milestoneCount, isSubPr
   const completed = active.filter((f) => f.status === 'done' || f.status === 'shipped').length
   const percentage = active.length > 0 ? Math.round((completed / active.length) * 100) : 0
 
+  if (isSubProject) {
+    return (
+      <Link href={`/dashboard/${project.slug}`} className="block">
+        <div
+          className="card-static !py-2.5 !px-3"
+          style={{ borderLeftWidth: '2px', borderLeftColor: project.color }}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="text-sm font-medium text-text-secondary truncate">{project.name}</h3>
+              <span className={`badge ${projectBadgeClass(project.status)} !text-[10px] !px-1.5 !py-0 shrink-0`} style={{ fontFamily: 'var(--font-mono)' }}>
+                {project.status}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0 text-[11px] text-text-tertiary" style={{ fontFamily: 'var(--font-mono)' }}>
+              <span>{active.length} features</span>
+              <span style={{ color: project.color }}>{percentage}%</span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    )
+  }
+
   return (
     <Link href={`/dashboard/${project.slug}`} className="block">
       <div
@@ -32,7 +56,7 @@ export default function ProjectCard({ project, features, milestoneCount, isSubPr
         style={{ borderLeftWidth: '3px', borderLeftColor: project.color }}
       >
         <div className="flex items-start justify-between gap-2 mb-3">
-          <h2 className={`${isSubProject ? 'text-base' : 'text-lg'} font-semibold text-text-primary`}>{project.name}</h2>
+          <h2 className="text-lg font-semibold text-text-primary">{project.name}</h2>
           <span className={`badge ${projectBadgeClass(project.status)} shrink-0`} style={{ fontFamily: 'var(--font-mono)' }}>
             {project.status}
           </span>

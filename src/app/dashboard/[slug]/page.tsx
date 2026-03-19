@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import { createBrowserClient } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { Project, Milestone, Feature, ScopeLogEntry } from '@/lib/dashboard-types'
 import ProjectHeader from '@/components/dashboard/ProjectHeader'
@@ -36,7 +36,7 @@ export default function ProjectDashboardPage() {
   const initialLoadDone = useRef(false)
 
   const fetchData = useCallback(async () => {
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     const { data: projectData, error: projectError } = await supabase
       .from('projects')
       .select('*')
@@ -80,7 +80,7 @@ export default function ProjectDashboardPage() {
 
   useEffect(() => {
     if (!project) return
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     const channel = supabase
       .channel(`dashboard-${project.id}`)
       .on(
