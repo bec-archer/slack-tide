@@ -80,14 +80,34 @@ export default function DashboardPage() {
         <p className="text-text-tertiary text-sm">No projects yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              features={features.filter((f) => f.project_id === project.id) as Feature[]}
-              milestoneCount={milestones.filter((m) => m.project_id === project.id).length}
-            />
-          ))}
+          {projects
+            .filter((p) => !p.parent_project_id)
+            .map((parent) => {
+              const children = projects.filter((p) => p.parent_project_id === parent.id)
+              const parentFeatures = features.filter(
+                (f) => f.project_id === parent.id
+              ) as Feature[]
+              return (
+                <div key={parent.id} className="space-y-2">
+                  <ProjectCard
+                    project={parent}
+                    features={parentFeatures}
+                    milestoneCount={milestones.filter((m) => m.project_id === parent.id).length}
+                  />
+                  {children.map((child) => (
+                    <div key={child.id} className="pl-6 relative">
+                      <span className="absolute left-1.5 top-4 text-text-tertiary text-sm select-none">↳</span>
+                      <ProjectCard
+                        project={child}
+                        features={features.filter((f) => f.project_id === child.id) as Feature[]}
+                        milestoneCount={milestones.filter((m) => m.project_id === child.id).length}
+                        isSubProject
+                      />
+                    </div>
+                  ))}
+                </div>
+              )
+            })}
         </div>
       )}
     </div>
