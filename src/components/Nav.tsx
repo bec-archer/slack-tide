@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { useShop } from '@/contexts/ShopContext'
-import QRSTKRLogo from './QRSTKRLogo'
 import NotificationBell from './NotificationBell'
 
 const ADMIN_EMAILS = ['beckeeper78@gmail.com']
@@ -29,8 +28,12 @@ export default function Nav() {
   return (
     <nav className="bg-bg-secondary border-b border-border-subtle relative">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="group" onClick={() => setMenuOpen(false)}>
-          <QRSTKRLogo id="nav" height={121} />
+        <Link
+          href="/"
+          className="text-lg font-bold tracking-tight text-text-primary hover:opacity-80 transition-opacity"
+          onClick={() => setMenuOpen(false)}
+        >
+          Slack Tide
         </Link>
 
         {/* Desktop nav — hidden on mobile */}

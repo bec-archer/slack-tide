@@ -25,9 +25,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "QRSTKR — Track it. Own it. Sell it.",
-  description:
-    "State-shaped QR code stickers for tracking equipment, vehicles, and more.",
+  title: "Slack Tide",
+  description: "See what's beneath the surface.",
 };
 
 export default function RootLayout({
