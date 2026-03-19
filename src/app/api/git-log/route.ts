@@ -1,26 +1,21 @@
-import { NextResponse } from 'next/server'
-import { execSync } from 'child_process'
-
-export const revalidate = 30
-
 export async function GET() {
-  try {
-    const output = execSync(
-      'git log --pretty=format:"%H|%s|%an|%ae|%ar|%at" -50',
-      { cwd: process.cwd(), encoding: 'utf-8', timeout: 5000 }
-    )
-
-    const commits = output
-      .trim()
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => {
-        const [hash, message, author, email, relativeTime, timestamp] = line.split('|')
-        return { hash, message, author, email, relativeTime, timestamp: Number(timestamp) }
-      })
-
-    return NextResponse.json(commits)
-  } catch {
-    return NextResponse.json([], { status: 200 })
-  }
+  const token = process.env.GITHUB_TOKEN;
+  const res = await fetch(
+    'https://api.github.com/repos/bec-archer/slack-tide/commits?per_page=50',
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+      },
+      next: { revalidate: 60 },
+    }
+  );
+  const commits = await res.json();
+  const formatted = commits.map((c: any) => ({
+    hash: c.sha.slice(0, 7),
+    message: c.commit.message.split('\n')[0],
+    author: c.commit.author.name,
+    date: c.commit.author.date,
+  }));
+  return Response.json(formatted);
 }
