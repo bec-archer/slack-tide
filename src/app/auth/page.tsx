@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import QRSTKRLogo from '@/components/QRSTKRLogo'
 
 function AuthForm() {
   const router = useRouter()
@@ -168,10 +167,10 @@ function AuthForm() {
       <div className="max-w-md w-full animate-fade-in">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-3">
-            <QRSTKRLogo id="auth" height={36} />
+            <span className="text-2xl font-extrabold tracking-tight text-text-primary">Slack Tide</span>
           </Link>
           <p className="text-text-secondary">
-            {mode === 'signin' ? 'Sign in to manage your items' : 'Create your account'}
+            {mode === 'signin' ? 'Sign in to your dashboard' : 'Create your account'}
           </p>
         </div>
 
@@ -330,8 +329,8 @@ export default function AuthPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-bg-primary">
-        <div className="animate-pulse-bullseye">
-          <QRSTKRLogo id="auth-loading" height={32} />
+        <div className="animate-pulse">
+          <span className="text-2xl font-extrabold tracking-tight text-text-primary">Slack Tide</span>
         </div>
       </div>
     }>
