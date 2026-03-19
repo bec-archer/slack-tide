@@ -4,7 +4,6 @@ import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
 
 function AuthForm() {
   const router = useRouter()
@@ -166,9 +165,7 @@ function AuthForm() {
     <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
       <div className="max-w-md w-full animate-fade-in">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-3">
-            <span className="text-2xl font-extrabold tracking-tight text-text-primary">Slack Tide</span>
-          </Link>
+          <span className="text-2xl font-extrabold tracking-tight text-text-primary inline-block mb-3">Slack Tide</span>
           <p className="text-text-secondary">
             {mode === 'signin' ? 'Sign in to your dashboard' : 'Create your account'}
           </p>
@@ -201,17 +198,6 @@ function AuthForm() {
               </svg>
               {oauthLoading === 'apple' ? 'Redirecting...' : 'Continue with Apple'}
             </button>
-          </div>
-
-          {/* Shop portal link */}
-          <div className="text-center mb-4">
-            <Link
-              href="/shop"
-              className="text-sm text-text-tertiary hover:text-accent transition-colors"
-            >
-              Are you a repair shop?{' '}
-              <span className="text-accent font-medium">Go to Shop Portal →</span>
-            </Link>
           </div>
 
           {/* Divider */}
