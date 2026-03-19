@@ -39,9 +39,9 @@ export default function ProjectCard({ project, features, milestoneCount, isSubPr
                 {project.status}
               </span>
             </div>
-            <div className="flex items-center gap-3 shrink-0 text-[11px] text-text-tertiary" style={{ fontFamily: 'var(--font-mono)' }}>
+            <div className="flex items-center gap-3 shrink-0 text-xs text-text-tertiary" style={{ fontFamily: 'var(--font-mono)' }}>
               <span>{active.length} features</span>
-              <span style={{ color: project.color }}>{percentage}%</span>
+              <span className="font-semibold" style={{ color: project.color }}>{percentage}%</span>
             </div>
           </div>
         </div>
