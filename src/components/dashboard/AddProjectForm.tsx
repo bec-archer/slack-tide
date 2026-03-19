@@ -40,27 +40,36 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
     if (!name.trim()) return
     setSaving(true)
     setFormError(null)
+    const payload = {
+      name: name.trim(),
+      slug: generateSlug(name),
+      description: description.trim() || null,
+      color,
+      status: 'active',
+      parent_project_id: parentProjectId || null,
+    }
+    console.log('[AddProjectForm] Submitting to /api/projects', JSON.stringify(payload))
     try {
       const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          slug: generateSlug(name),
-          description: description.trim() || null,
-          color,
-          status: 'active',
-          parent_project_id: parentProjectId || null,
-        }),
+        body: JSON.stringify(payload),
       })
+      const responseBody = await res.text()
+      console.log('[AddProjectForm] Response status:', res.status, res.statusText)
+      console.log('[AddProjectForm] Response body:', responseBody)
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: 'Unknown error' }))
-        const detail = [err.error, err.hint, err.code].filter(Boolean).join(' — ')
-        setFormError(detail || 'Failed to create project')
+        let detail = 'Failed to create project'
+        try {
+          const err = JSON.parse(responseBody)
+          detail = [err.error, err.hint, err.code].filter(Boolean).join(' — ') || detail
+        } catch { /* not JSON */ }
+        setFormError(detail)
         setSaving(false)
         return
       }
-    } catch {
+    } catch (err) {
+      console.error('[AddProjectForm] Fetch error:', err)
       setFormError('Network error — could not reach server')
       setSaving(false)
       return

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import { createBrowserClient } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { Project, Feature, Milestone } from '@/lib/dashboard-types'
 import ProjectCard from '@/components/dashboard/ProjectCard'
@@ -20,7 +20,7 @@ export default function DashboardPage() {
   const isAdmin = user?.email === ADMIN_EMAIL
 
   const fetchData = useCallback(async () => {
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     const [projectsRes, featuresRes, milestonesRes] = await Promise.all([
       supabase.from('projects').select('*').order('created_at', { ascending: false }),
       supabase.from('features').select('id, project_id, status').limit(500),
@@ -31,7 +31,17 @@ export default function DashboardPage() {
       setLoading(false)
       return
     }
-    setProjects(projectsRes.data || [])
+    const allProjects = projectsRes.data || []
+    console.log('[Dashboard] All projects from Supabase:', JSON.stringify(allProjects.map(p => ({ id: p.id, name: p.name, parent_project_id: p.parent_project_id }))))
+    const topLevel = allProjects.filter((p: Project) => p.parent_project_id == null)
+    console.log('[Dashboard] Top-level (parent_project_id == null):', topLevel.map((p: Project) => p.name))
+    topLevel.forEach((parent: Project) => {
+      const kids = allProjects.filter((p: Project) => p.parent_project_id === parent.id)
+      console.log(`[Dashboard] Children of "${parent.name}" (id=${parent.id}):`, kids.map((p: Project) => p.name))
+    })
+    const orphans = allProjects.filter((p: Project) => p.parent_project_id != null && !topLevel.some((t: Project) => t.id === p.parent_project_id))
+    if (orphans.length > 0) console.warn('[Dashboard] ORPHANED sub-projects (parent not in top-level):', orphans.map((p: Project) => ({ name: p.name, parent_project_id: p.parent_project_id })))
+    setProjects(allProjects)
     setFeatures((featuresRes.data || []) as unknown as Feature[])
     setMilestones((milestonesRes.data || []) as unknown as Milestone[])
     setLoading(false)
@@ -42,7 +52,7 @@ export default function DashboardPage() {
   }, [fetchData])
 
   useEffect(() => {
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     const channel = supabase
       .channel('dashboard-overview')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, fetchData)
