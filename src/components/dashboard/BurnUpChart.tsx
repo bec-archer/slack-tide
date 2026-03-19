@@ -9,8 +9,10 @@ interface BurnUpChartProps {
   accentColor: string
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string | null | undefined) {
+  if (!dateStr) return '—'
   const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return '—'
   return `${d.getMonth() + 1}/${d.getDate()}`
 }
 
@@ -18,8 +20,9 @@ export default function BurnUpChart({ scopeLog, accentColor }: BurnUpChartProps)
   const data = useMemo(() => {
     if (!scopeLog.length) return []
 
-    // Sort oldest first
-    const sorted = [...scopeLog].sort(
+    // Filter out entries with invalid dates, then sort oldest first
+    const valid = scopeLog.filter((e) => e.created_at && !isNaN(new Date(e.created_at).getTime()))
+    const sorted = [...valid].sort(
       (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     )
 

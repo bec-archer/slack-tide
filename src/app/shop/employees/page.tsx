@@ -298,7 +298,7 @@ export default function ShopEmployeesPage() {
             <div key={emp.id} className="p-4 flex items-center justify-between">
               <div>
                 <p className="text-text-primary text-sm font-medium">{employeeLabel(emp)}</p>
-                <p className="text-text-tertiary text-xs capitalize">{emp.role} — Invited {new Date(emp.invited_at).toLocaleDateString()}</p>
+                <p className="text-text-tertiary text-xs capitalize">{emp.role} — Invited {emp.invited_at ? new Date(emp.invited_at).toLocaleDateString() : '—'}</p>
               </div>
               <span className="text-xs text-warning font-medium">Pending</span>
             </div>

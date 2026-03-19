@@ -20,8 +20,11 @@ const ACTION_COLORS: Record<ScopeLogAction, string> = {
   project_created: 'var(--accent-primary)',
 }
 
-function timeAgo(dateStr: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
+function timeAgo(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—'
+  const ms = Date.now() - new Date(dateStr).getTime()
+  if (isNaN(ms) || ms < 0) return '—'
+  const seconds = Math.floor(ms / 1000)
   if (seconds < 60) return 'just now'
   const minutes = Math.floor(seconds / 60)
   if (minutes < 60) return `${minutes}m ago`

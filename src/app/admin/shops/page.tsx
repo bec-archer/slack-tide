@@ -149,7 +149,7 @@ export default function AdminShopsPage() {
                       ))}
                     </div>
                     <p className="text-text-tertiary text-xs mt-2">
-                      Registered: {new Date(shop.created_at).toLocaleDateString()}
+                      Registered: {shop.created_at ? new Date(shop.created_at).toLocaleDateString() : '—'}
                     </p>
                   </div>
 
@@ -227,7 +227,7 @@ export default function AdminShopsPage() {
                     {shop.verified_method === 'google_business' ? 'Google' : 'Manual'}
                   </span>
                   <span className="text-text-tertiary text-xs ml-2">
-                    {new Date(shop.verified_at).toLocaleDateString()}
+                    {shop.verified_at ? new Date(shop.verified_at).toLocaleDateString() : '—'}
                   </span>
                 </div>
               </div>

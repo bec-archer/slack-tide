@@ -87,8 +87,11 @@ export default function ShopHistoryPage() {
     fetchSubmissions(0)
   }
 
-  function formatDate(d: string): string {
-    return new Date(d + 'T00:00:00').toLocaleDateString('en-US', {
+  function formatDate(d: string | null | undefined): string {
+    if (!d) return '—'
+    const date = new Date(d + 'T00:00:00')
+    if (isNaN(date.getTime())) return '—'
+    return date.toLocaleDateString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric',
     })
   }
@@ -236,9 +239,9 @@ export default function ShopHistoryPage() {
                           <div>
                             <p className="text-xs font-medium text-text-tertiary">Submitted</p>
                             <p className="text-text-primary">
-                              {new Date(rec.created_at).toLocaleDateString('en-US', {
+                              {rec.created_at ? new Date(rec.created_at).toLocaleDateString('en-US', {
                                 month: 'short', day: 'numeric', year: 'numeric',
-                              })}
+                              }) : '—'}
                             </p>
                           </div>
                         </div>

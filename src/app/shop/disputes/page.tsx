@@ -70,8 +70,11 @@ export default function ShopDisputesPage() {
     fetchDisputes(page)
   }, [page, fetchDisputes])
 
-  function formatDate(d: string): string {
-    return new Date(d).toLocaleDateString('en-US', {
+  function formatDate(d: string | null | undefined): string {
+    if (!d) return '—'
+    const date = new Date(d)
+    if (isNaN(date.getTime())) return '—'
+    return date.toLocaleDateString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric',
     })
   }

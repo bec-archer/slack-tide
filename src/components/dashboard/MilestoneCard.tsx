@@ -79,7 +79,7 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
             {milestone.description && (
               <p className="text-sm text-text-tertiary mt-0.5">{milestone.description}</p>
             )}
-            {milestone.target_date && (
+            {milestone.target_date && !isNaN(new Date(milestone.target_date).getTime()) && (
               <p className="text-xs text-text-tertiary mt-1 font-mono" style={{ fontFamily: 'var(--font-mono)' }}>
                 Target: {new Date(milestone.target_date).toLocaleDateString()}
               </p>

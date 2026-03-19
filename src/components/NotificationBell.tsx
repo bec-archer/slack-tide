@@ -86,8 +86,10 @@ export default function NotificationBell() {
     }
   }
 
-  function formatTimeAgo(dateStr: string): string {
+  function formatTimeAgo(dateStr: string | null | undefined): string {
+    if (!dateStr) return '—'
     const diff = Date.now() - new Date(dateStr).getTime()
+    if (isNaN(diff) || diff < 0) return '—'
     const mins = Math.floor(diff / 60000)
     if (mins < 1) return 'just now'
     if (mins < 60) return `${mins}m ago`

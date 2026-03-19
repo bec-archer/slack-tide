@@ -69,8 +69,10 @@ export default function NotificationsPage() {
     }
   }
 
-  function formatDate(dateStr: string): string {
+  function formatDate(dateStr: string | null | undefined): string {
+    if (!dateStr) return '—'
     const d = new Date(dateStr)
+    if (isNaN(d.getTime())) return '—'
     const now = new Date()
     const diffMs = now.getTime() - d.getTime()
     const diffMins = Math.floor(diffMs / 60000)

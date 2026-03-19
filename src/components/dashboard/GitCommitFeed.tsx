@@ -25,8 +25,11 @@ function CommitSparkline({ commits, accentColor }: { commits: Commit[]; accentCo
       days.push({ day: d.toISOString().slice(0, 10), count: 0 })
     }
     for (const c of commits) {
-      const day = new Date(c.timestamp * 1000).toISOString().slice(0, 10)
-      const entry = days.find((d) => d.day === day)
+      if (!c.timestamp) continue
+      const d = new Date(c.timestamp * 1000)
+      if (isNaN(d.getTime())) continue
+      const day = d.toISOString().slice(0, 10)
+      const entry = days.find((dd) => dd.day === day)
       if (entry) entry.count++
     }
     return days

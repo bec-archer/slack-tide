@@ -114,9 +114,11 @@ export default function AdminOrdersPage() {
     return STATUS_FLOW[idx + 1]
   }
 
-  const formatDate = (d: string | null) => {
+  const formatDate = (d: string | null | undefined) => {
     if (!d) return '—'
-    return new Date(d).toLocaleString('en-US', {
+    const date = new Date(d)
+    if (isNaN(date.getTime())) return '—'
+    return date.toLocaleString('en-US', {
       month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
     })
   }
