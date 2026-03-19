@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<!-- this is a comment -->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRSTKR — Project Infographic</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ===== DESIGN TOKENS ===== */
+  :root {
+    --bg-primary: #0a0f14;
+    --bg-secondary: #0f1419;
+    --bg-tertiary: #151c24;
+    --bg-elevated: #1c252f;
+    --border-subtle: rgba(45, 212, 191, 0.08);
+    --border-default: rgba(45, 212, 191, 0.15);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --accent-primary: #2dd4bf;
+    --accent-secondary: #5eead4;
+    --accent-glow: rgba(45, 212, 191, 0.15);
+    --accent-muted: rgba(45, 212, 191, 0.08);
+    --success: #4ade80;
+    --gradient-start: #2dd4bf;
+    --gradient-end: #5eead4;
+    --card-bg: #0f1419;
+    --card-border: rgba(45, 212, 191, 0.12);
+    --banner-bg: linear-gradient(135deg, #0d9488, #14b8a6, #2dd4bf);
+    --total-bg: linear-gradient(135deg, rgba(45,212,191,0.15), rgba(45,212,191,0.08));
+    --total-border: rgba(45, 212, 191, 0.25);
+    --total-text: var(--text-primary);
+    --pill-bg: rgba(45, 212, 191, 0.08);
+    --pill-border: rgba(45, 212, 191, 0.25);
+    --phase-border-top: #2dd4bf;
+    --shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-elevated: #e2e8f0;
+    --border-subtle: rgba(13, 148, 136, 0.1);
+    --border-default: rgba(13, 148, 136, 0.18);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --accent-primary: #0d9488;
+    --accent-secondary: #14b8a6;
+    --accent-glow: rgba(13, 148, 136, 0.12);
+    --accent-muted: rgba(13, 148, 136, 0.06);
+    --gradient-start: #0d9488;
+    --gradient-end: #14b8a6;
+    --card-bg: #f8fafc;
+    --card-border: rgba(13, 148, 136, 0.12);
+    --banner-bg: linear-gradient(135deg, #0d9488, #14b8a6);
+    --total-bg: linear-gradient(135deg, #0d9488, #14b8a6);
+    --total-border: transparent;
+    --total-text: #ffffff;
+    --pill-bg: #ffffff;
+    --pill-border: #14b8a6;
+    --phase-border-top: #14b8a6;
+    --shadow: 0 20px 60px rgba(13,148,136,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .infographic {
+    width: 900px;
+    max-width: 100%;
+    background: var(--bg-primary);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.3s;
+  }
+
+  /* ===== THEME TOGGLE ===== */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: 50px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+  }
+  .theme-toggle:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+  .theme-toggle .toggle-icon { font-size: 16px; }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--banner-bg);
+    color: white;
+    padding: 48px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%);
+  }
+  .header-logo {
+    width: 280px;
+    height: auto;
+    margin: 0 auto 12px;
+    display: block;
+    position: relative;
+  }
+  .header .subtitle {
+    font-size: 18px;
+    font-weight: 500;
+    opacity: 0.9;
+    position: relative;
+  }
+  .header .tagline {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 14px;
+    opacity: 0.6;
+    position: relative;
+  }
+
+  /* ===== CONTENT ===== */
+  .content { padding: 0 48px 48px; }
+
+  /* ===== GOAL BANNER ===== */
+  .goal-banner {
+    background: var(--accent-muted);
+    border-left: 4px solid var(--accent-primary);
+    padding: 24px 28px;
+    margin: 36px 0;
+    border-radius: 0 12px 12px 0;
+  }
+  .goal-banner .label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-primary);
+    margin-bottom: 8px;
+  }
+  .goal-banner p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  /* ===== SECTION TITLES ===== */
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent-primary);
+    margin: 40px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title .icon {
+    width: 40px; height: 40px;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ===== HOW IT WORKS FLOW ===== */
+  .flow-steps {
+    display: flex;
+    gap: 0;
+    margin: 20px 0 32px;
+    align-items: stretch;
+  }
+  .flow-step {
+    flex: 1;
+    text-align: center;
+    padding: 20px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    margin: 0 4px;
+  }
+  .flow-step .step-num {
+    width: 32px; height: 32px;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    margin: 0 auto 10px;
+  }
+  .flow-step .step-icon { font-size: 28px; margin-bottom: 8px; }
+  .flow-step .step-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--accent-primary);
+    font-size: 18px;
+    font-weight: 900;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  /* ===== USERS GRID ===== */
+  .users-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0 32px;
+  }
+  .user-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--card-border);
+  }
+  .user-card .user-icon { font-size: 28px; margin-bottom: 8px; }
+  .user-card h4 {
+    font-size: 15px; font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 6px;
+  }
+  .user-card p {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-tertiary);
+  }
+
+  /* ===== HARDWARE & COSTS ===== */
+  .cost-section { margin: 16px 0 32px; }
+  .cost-category { margin-bottom: 20px; }
+  .cost-category-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .cost-items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cost-item {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 14px 16px;
+    flex: 1; min-width: 180px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .cost-item .ci-icon { font-size: 24px; flex-shrink: 0; }
+  .cost-item .ci-info { flex: 1; }
+  .cost-item .ci-name { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+  .cost-item .ci-cost { font-size: 13px; font-weight: 800; color: var(--accent-primary); }
+  .cost-item .ci-note { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+
+  /* ===== CLOUD SERVICES ===== */
+  .cloud-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0 20px;
+  }
+  .cloud-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .cloud-card .cc-icon { font-size: 24px; margin-bottom: 6px; }
+  .cloud-card .cc-name { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; }
+  .cloud-card .cc-cost { font-size: 14px; font-weight: 800; color: var(--accent-primary); }
+  .cloud-card .cc-note { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+
+  /* ===== TOTAL COST BANNER ===== */
+  .total-banner {
+    background: var(--total-bg);
+    border: 1px solid var(--total-border);
+    color: var(--total-text);
+    border-radius: 14px;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 24px 0 32px;
+    text-align: center;
+  }
+  .total-item .total-label {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .total-item .total-value { font-size: 22px; font-weight: 900; }
+  .total-divider { width: 1px; height: 48px; background: rgba(255,255,255,0.2); }
+
+  /* ===== REVENUE MODEL ===== */
+  .revenue-items { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 32px; }
+  .revenue-pill {
+    background: var(--pill-bg);
+    border: 1px solid var(--pill-border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent-primary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .revenue-pill.future { border-style: dashed; opacity: 0.5; }
+
+  /* ===== PHASES ===== */
+  .phases { display: flex; gap: 12px; margin: 16px 0 32px; }
+  .phase {
+    flex: 1;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px 16px;
+    border-top: 4px solid var(--phase-border-top);
+  }
+  .phase .phase-num {
+    font-size: 11px; font-weight: 800;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .phase h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+  .phase p { font-size: 11px; line-height: 1.5; color: var(--text-tertiary); }
+
+  /* ===== MARKETING STRATEGY ===== */
+  .marketing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0 32px;
+  }
+  .marketing-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .marketing-card .mc-icon { font-size: 28px; margin-bottom: 8px; }
+  .marketing-card h4 { font-size: 12px; font-weight: 700; color: var(--accent-primary); margin-bottom: 4px; }
+  .marketing-card p { font-size: 10px; line-height: 1.4; color: var(--text-tertiary); }
+
+  /* ===== SHOPPING LIST ===== */
+  .shopping-list { margin: 16px 0 32px; }
+  .shop-item {
+    display: flex; align-items: center;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    gap: 14px;
+  }
+  .shop-item:nth-child(odd) { background: var(--bg-tertiary); }
+  .shop-item:nth-child(even) { background: var(--card-bg); }
+  .shop-item .si-num {
+    width: 28px; height: 28px;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .shop-item .si-check {
+    width: 28px; height: 28px;
+    background: var(--success);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .shop-item .si-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .shop-item .si-cost { font-size: 13px; font-weight: 800; color: var(--accent-primary); text-align: right; }
+  .shop-item .si-cost.done { color: var(--success); }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: var(--bg-secondary);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .footer .footer-left { font-size: 12px; color: var(--text-tertiary); }
+  .footer .footer-right { font-size: 14px; font-weight: 700; color: var(--accent-primary); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    body { padding: 16px 8px; }
+    .header { padding: 32px 24px; }
+    .header-logo { width: 200px; }
+    .header .subtitle { font-size: 15px; }
+    .content { padding: 0 20px 32px; }
+
+    .flow-steps { flex-direction: column; gap: 8px; }
+    .flow-arrow { justify-content: center; transform: rotate(90deg); padding: 4px 0; }
+    .flow-step { margin: 0; }
+
+    .users-grid { grid-template-columns: 1fr; }
+    .cloud-grid { grid-template-columns: repeat(3, 1fr); }
+    .phases { flex-direction: column; }
+    .marketing-grid { grid-template-columns: 1fr 1fr; }
+    .cost-item { min-width: 100%; }
+
+    .total-banner { flex-direction: column; gap: 16px; padding: 20px; }
+    .total-divider { width: 60%; height: 1px; }
+
+    .revenue-items { flex-direction: column; }
+    .revenue-pill { justify-content: center; }
+
+    .section-title { font-size: 18px; }
+
+    .footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px; }
+
+    .theme-toggle { top: 12px; right: 12px; padding: 5px 10px; font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .cloud-grid { grid-template-columns: 1fr; }
+    .marketing-grid { grid-template-columns: 1fr; }
+    .header-logo { width: 160px; }
+  }
+
+  /* ===== PRINT ===== */
+  @media print {
+    body { background: white !important; padding: 0; }
+    .infographic {
+      box-shadow: none;
+      border-radius: 0;
+      border: none;
+      width: 100%;
+    }
+    .theme-toggle { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+  <span class="toggle-icon" id="themeIcon">&#x2600;</span>
+  <span id="themeLabel">Light</span>
+</button>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <!-- QRSTKR Logo (inline SVG — halftone urchin + wordmark) -->
+    <svg class="header-logo" viewBox="0 0 300 121" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <g id="Halftone_Urchin">
+        <g>
+          <circle cx="57.197" cy="96.334" r="1.621"/><circle cx="57.197" cy="100.585" r="1.41"/><circle cx="57.197" cy="104.837" r="1.199"/><circle cx="57.197" cy="109.088" r="0.988"/><circle cx="57.197" cy="113.34" r="0.777"/><circle cx="57.197" cy="117.591" r="0.566"/>
+          <circle cx="53.617" cy="96.152" r="1.621"/><circle cx="53.187" cy="100.382" r="1.41"/><circle cx="52.757" cy="104.612" r="1.199"/><circle cx="52.327" cy="108.841" r="0.988"/><circle cx="51.897" cy="113.071" r="0.777"/><circle cx="51.467" cy="117.301" r="0.566"/>
+          <circle cx="50.076" cy="95.611" r="1.621"/><circle cx="49.22" cy="99.776" r="1.41"/><circle cx="48.364" cy="103.94" r="1.199"/><circle cx="47.508" cy="108.105" r="0.988"/><circle cx="46.653" cy="112.269" r="0.777"/><circle cx="45.797" cy="116.433" r="0.566"/>
+          <circle cx="46.607" cy="94.712" r="1.621"/><circle cx="45.335" cy="98.769" r="1.41"/><circle cx="44.062" cy="102.825" r="1.199"/><circle cx="42.789" cy="106.882" r="0.988"/><circle cx="41.516" cy="110.938" r="0.777"/><circle cx="40.244" cy="114.995" r="0.566"/>
+          <circle cx="43.247" cy="93.467" r="1.621"/><circle cx="41.57" cy="97.373" r="1.41"/><circle cx="39.894" cy="101.28" r="1.199"/><circle cx="38.217" cy="105.187" r="0.988"/><circle cx="36.54" cy="109.094" r="0.777"/><circle cx="34.864" cy="113.001" r="0.566"/>
+          <circle cx="40.03" cy="91.889" r="1.621"/><circle cx="37.967" cy="95.606" r="1.41"/><circle cx="35.904" cy="99.323" r="1.199"/><circle cx="33.84" cy="103.04" r="0.988"/><circle cx="31.777" cy="106.757" r="0.777"/><circle cx="29.714" cy="110.475" r="0.566"/>
+          <circle cx="36.989" cy="89.994" r="1.621"/><circle cx="34.56" cy="93.484" r="1.41"/><circle cx="32.131" cy="96.973" r="1.199"/><circle cx="29.702" cy="100.462" r="0.988"/><circle cx="27.274" cy="103.952" r="0.777"/><circle cx="24.845" cy="107.441" r="0.566"/>
+          <circle cx="34.155" cy="87.8" r="1.621"/><circle cx="31.386" cy="91.026" r="1.41"/><circle cx="28.616" cy="94.251" r="1.199"/><circle cx="25.847" cy="97.477" r="0.988"/><circle cx="23.078" cy="100.703" r="0.777"/><circle cx="20.309" cy="103.929" r="0.566"/>
+          <circle cx="31.558" cy="85.332" r="1.621"/><circle cx="28.476" cy="88.261" r="1.41"/><circle cx="25.395" cy="91.19" r="1.199"/><circle cx="22.314" cy="94.119" r="0.988"/><circle cx="19.232" cy="97.048" r="0.777"/><circle cx="16.151" cy="99.977" r="0.566"/>
+          <circle cx="29.224" cy="82.613" r="1.621"/><circle cx="25.862" cy="85.215" r="1.41"/><circle cx="22.5" cy="87.817" r="1.199"/><circle cx="19.138" cy="90.42" r="0.988"/><circle cx="15.776" cy="93.022" r="0.777"/><circle cx="12.414" cy="95.624" r="0.566"/>
+          <circle cx="27.177" cy="79.671" r="1.621"/><circle cx="23.569" cy="81.92" r="1.41"/><circle cx="19.961" cy="84.169" r="1.199"/><circle cx="16.353" cy="86.418" r="0.988"/><circle cx="12.745" cy="88.667" r="0.777"/><circle cx="9.137" cy="90.916" r="0.566"/>
+          <circle cx="25.438" cy="76.539" r="1.621"/><circle cx="21.621" cy="78.411" r="1.41"/><circle cx="17.804" cy="80.284" r="1.199"/><circle cx="13.987" cy="82.156" r="0.988"/><circle cx="10.17" cy="84.028" r="0.777"/><circle cx="6.353" cy="85.901" r="0.566"/>
+          <circle cx="24.025" cy="73.247" r="1.621"/><circle cx="20.038" cy="74.723" r="1.41"/><circle cx="16.052" cy="76.2" r="1.199"/><circle cx="12.065" cy="77.676" r="0.988"/><circle cx="8.078" cy="79.153" r="0.777"/><circle cx="4.091" cy="80.629" r="0.566"/>
+          <circle cx="22.952" cy="69.827" r="1.621"/><circle cx="18.837" cy="70.893" r="1.41"/><circle cx="14.721" cy="71.959" r="1.199"/><circle cx="10.605" cy="73.024" r="0.988"/><circle cx="6.489" cy="74.09" r="0.777"/><circle cx="2.374" cy="75.156" r="0.566"/>
+          <circle cx="22.231" cy="66.317" r="1.621"/><circle cx="18.029" cy="66.961" r="1.41"/><circle cx="13.826" cy="67.604" r="1.199"/><circle cx="9.624" cy="68.248" r="0.988"/><circle cx="5.422" cy="68.892" r="0.777"/><circle cx="1.219" cy="69.536" r="0.566"/>
+          <circle cx="21.869" cy="62.752" r="1.621"/><circle cx="17.623" cy="62.968" r="1.41"/><circle cx="13.377" cy="63.183" r="1.199"/><circle cx="9.131" cy="63.398" r="0.988"/><circle cx="4.885" cy="63.614" r="0.777"/><circle cx="0.639" cy="63.829" r="0.566"/>
+          <circle cx="21.869" cy="59.168" r="1.621"/><circle cx="17.623" cy="58.953" r="1.41"/><circle cx="13.377" cy="58.738" r="1.199"/><circle cx="9.131" cy="58.522" r="0.988"/><circle cx="4.885" cy="58.307" r="0.777"/><circle cx="0.639" cy="58.092" r="0.566"/>
+          <circle cx="22.231" cy="55.604" r="1.621"/><circle cx="18.029" cy="54.96" r="1.41"/><circle cx="13.826" cy="54.317" r="1.199"/><circle cx="9.624" cy="53.673" r="0.988"/><circle cx="5.422" cy="53.029" r="0.777"/><circle cx="1.219" cy="52.385" r="0.566"/>
+          <circle cx="22.952" cy="52.094" r="1.621"/><circle cx="18.837" cy="51.029" r="1.41"/><circle cx="14.721" cy="49.963" r="1.199"/><circle cx="10.605" cy="48.897" r="0.988"/><circle cx="6.489" cy="47.832" r="0.777"/><circle cx="2.374" cy="46.766" r="0.566"/>
+          <circle cx="24.025" cy="48.675" r="1.621"/><circle cx="20.038" cy="47.199" r="1.41"/><circle cx="16.051" cy="45.722" r="1.199"/><circle cx="12.064" cy="44.246" r="0.988"/><circle cx="8.078" cy="42.769" r="0.777"/><circle cx="4.091" cy="41.292" r="0.566"/>
+          <circle cx="25.438" cy="45.383" r="1.621"/><circle cx="21.621" cy="43.51" r="1.41"/><circle cx="17.804" cy="41.638" r="1.199"/><circle cx="13.987" cy="39.766" r="0.988"/><circle cx="10.171" cy="37.893" r="0.777"/><circle cx="6.354" cy="36.021" r="0.566"/>
+          <circle cx="27.177" cy="42.249" r="1.621"/><circle cx="23.569" cy="40" r="1.41"/><circle cx="19.961" cy="37.751" r="1.199"/><circle cx="16.353" cy="35.502" r="0.988"/><circle cx="12.745" cy="33.254" r="0.777"/><circle cx="9.137" cy="31.005" r="0.566"/>
+          <circle cx="29.224" cy="39.309" r="1.621"/><circle cx="25.862" cy="36.706" r="1.41"/><circle cx="22.5" cy="34.104" r="1.199"/><circle cx="19.138" cy="31.502" r="0.988"/><circle cx="15.776" cy="28.899" r="0.777"/><circle cx="12.414" cy="26.297" r="0.566"/>
+          <circle cx="31.558" cy="36.59" r="1.621"/><circle cx="28.477" cy="33.661" r="1.41"/><circle cx="25.395" cy="30.732" r="1.199"/><circle cx="22.314" cy="27.803" r="0.988"/><circle cx="19.232" cy="24.873" r="0.777"/><circle cx="16.151" cy="21.944" r="0.566"/>
+          <circle cx="34.155" cy="34.121" r="1.621"/><circle cx="31.386" cy="30.895" r="1.41"/><circle cx="28.617" cy="27.669" r="1.199"/><circle cx="25.847" cy="24.444" r="0.988"/><circle cx="23.078" cy="21.218" r="0.777"/><circle cx="20.309" cy="17.992" r="0.566"/>
+          <circle cx="36.989" cy="31.928" r="1.621"/><circle cx="34.56" cy="28.438" r="1.41"/><circle cx="32.132" cy="24.949" r="1.199"/><circle cx="29.703" cy="21.46" r="0.988"/><circle cx="27.274" cy="17.97" r="0.777"/><circle cx="24.845" cy="14.481" r="0.566"/>
+          <circle cx="40.03" cy="30.032" r="1.621"/><circle cx="37.967" cy="26.315" r="1.41"/><circle cx="35.903" cy="22.598" r="1.199"/><circle cx="33.84" cy="18.88" r="0.988"/><circle cx="31.777" cy="15.163" r="0.777"/><circle cx="29.714" cy="11.446" r="0.566"/>
+          <circle cx="43.247" cy="28.454" r="1.621"/><circle cx="41.571" cy="24.547" r="1.41"/><circle cx="39.894" cy="20.64" r="1.199"/><circle cx="38.217" cy="16.733" r="0.988"/><circle cx="36.541" cy="12.827" r="0.777"/><circle cx="34.864" cy="8.92" r="0.566"/>
+          <circle cx="46.607" cy="27.209" r="1.621"/><circle cx="45.334" cy="23.153" r="1.41"/><circle cx="44.062" cy="19.096" r="1.199"/><circle cx="42.789" cy="15.04" r="0.988"/><circle cx="41.516" cy="10.983" r="0.777"/><circle cx="40.243" cy="6.927" r="0.566"/>
+          <circle cx="50.076" cy="26.311" r="1.621"/><circle cx="49.22" cy="22.147" r="1.41"/><circle cx="48.364" cy="17.982" r="1.199"/><circle cx="47.508" cy="13.818" r="0.988"/><circle cx="46.653" cy="9.653" r="0.777"/><circle cx="45.797" cy="5.489" r="0.566"/>
+          <circle cx="53.618" cy="25.769" r="1.621"/><circle cx="53.188" cy="21.539" r="1.41"/><circle cx="52.758" cy="17.31" r="1.199"/><circle cx="52.328" cy="13.08" r="0.988"/><circle cx="51.898" cy="8.85" r="0.777"/><circle cx="51.468" cy="4.621" r="0.566"/>
+          <circle cx="57.197" cy="25.587" r="1.621"/><circle cx="57.197" cy="21.336" r="1.41"/><circle cx="57.197" cy="17.084" r="1.199"/><circle cx="57.197" cy="12.833" r="0.988"/><circle cx="57.197" cy="8.581" r="0.777"/><circle cx="57.197" cy="4.33" r="0.566"/>
+          <circle cx="60.776" cy="25.769" r="1.621"/><circle cx="61.206" cy="21.539" r="1.41"/><circle cx="61.636" cy="17.31" r="1.199"/><circle cx="62.066" cy="13.08" r="0.988"/><circle cx="62.496" cy="8.85" r="0.777"/><circle cx="62.926" cy="4.621" r="0.566"/>
+          <circle cx="64.317" cy="26.311" r="1.621"/><circle cx="65.173" cy="22.147" r="1.41"/><circle cx="66.029" cy="17.982" r="1.199"/><circle cx="66.884" cy="13.818" r="0.988"/><circle cx="67.74" cy="9.653" r="0.777"/><circle cx="68.596" cy="5.489" r="0.566"/>
+          <circle cx="67.786" cy="27.209" r="1.621"/><circle cx="69.059" cy="23.153" r="1.41"/><circle cx="70.331" cy="19.096" r="1.199"/><circle cx="71.604" cy="15.04" r="0.988"/><circle cx="72.877" cy="10.983" r="0.777"/><circle cx="74.149" cy="6.927" r="0.566"/>
+          <circle cx="71.147" cy="28.454" r="1.621"/><circle cx="72.823" cy="24.547" r="1.41"/><circle cx="74.5" cy="20.64" r="1.199"/><circle cx="76.176" cy="16.733" r="0.988"/><circle cx="77.853" cy="12.827" r="0.777"/><circle cx="79.529" cy="8.92" r="0.566"/>
+          <circle cx="74.364" cy="30.032" r="1.621"/><circle cx="76.427" cy="26.315" r="1.41"/><circle cx="78.49" cy="22.598" r="1.199"/><circle cx="80.553" cy="18.88" r="0.988"/><circle cx="82.617" cy="15.163" r="0.777"/><circle cx="84.68" cy="11.446" r="0.566"/>
+          <circle cx="77.405" cy="31.928" r="1.621"/><circle cx="79.834" cy="28.438" r="1.41"/><circle cx="82.262" cy="24.949" r="1.199"/><circle cx="84.691" cy="21.459" r="0.988"/><circle cx="87.12" cy="17.97" r="0.777"/><circle cx="89.548" cy="14.48" r="0.566"/>
+          <circle cx="80.238" cy="34.121" r="1.621"/><circle cx="83.007" cy="30.895" r="1.41"/><circle cx="85.777" cy="27.669" r="1.199"/><circle cx="88.546" cy="24.444" r="0.988"/><circle cx="91.315" cy="21.218" r="0.777"/><circle cx="94.084" cy="17.992" r="0.566"/>
+          <circle cx="82.835" cy="36.59" r="1.621"/><circle cx="85.917" cy="33.661" r="1.41"/><circle cx="88.998" cy="30.731" r="1.199"/><circle cx="92.079" cy="27.802" r="0.988"/><circle cx="95.161" cy="24.873" r="0.777"/><circle cx="98.242" cy="21.944" r="0.566"/>
+          <circle cx="85.169" cy="39.308" r="1.621"/><circle cx="88.531" cy="36.706" r="1.41"/><circle cx="91.893" cy="34.103" r="1.199"/><circle cx="95.255" cy="31.501" r="0.988"/><circle cx="98.617" cy="28.899" r="0.777"/><circle cx="101.979" cy="26.296" r="0.566"/>
+          <circle cx="87.216" cy="42.249" r="1.621"/><circle cx="90.824" cy="40" r="1.41"/><circle cx="94.432" cy="37.752" r="1.199"/><circle cx="98.04" cy="35.503" r="0.988"/><circle cx="101.648" cy="33.254" r="0.777"/><circle cx="105.256" cy="31.005" r="0.566"/>
+          <circle cx="88.955" cy="45.383" r="1.621"/><circle cx="92.772" cy="43.51" r="1.41"/><circle cx="96.589" cy="41.638" r="1.199"/><circle cx="100.406" cy="39.766" r="0.988"/><circle cx="104.222" cy="37.893" r="0.777"/><circle cx="108.039" cy="36.021" r="0.566"/>
+          <circle cx="90.368" cy="48.675" r="1.621"/><circle cx="94.355" cy="47.199" r="1.41"/><circle cx="98.341" cy="45.722" r="1.199"/><circle cx="102.328" cy="44.246" r="0.988"/><circle cx="106.315" cy="42.769" r="0.777"/><circle cx="110.302" cy="41.292" r="0.566"/>
+          <circle cx="91.44" cy="52.094" r="1.621"/><circle cx="95.556" cy="51.029" r="1.41"/><circle cx="99.672" cy="49.963" r="1.199"/><circle cx="103.788" cy="48.897" r="0.988"/><circle cx="107.903" cy="47.832" r="0.777"/><circle cx="112.019" cy="46.766" r="0.566"/>
+          <circle cx="92.162" cy="55.604" r="1.621"/><circle cx="96.365" cy="54.961" r="1.41"/><circle cx="100.567" cy="54.317" r="1.199"/><circle cx="104.77" cy="53.673" r="0.988"/><circle cx="108.972" cy="53.029" r="0.777"/><circle cx="113.175" cy="52.385" r="0.566"/>
+          <circle cx="92.524" cy="59.169" r="1.621"/><circle cx="96.77" cy="58.954" r="1.41"/><circle cx="101.016" cy="58.739" r="1.199"/><circle cx="105.262" cy="58.523" r="0.988"/><circle cx="109.508" cy="58.308" r="0.777"/><circle cx="113.754" cy="58.093" r="0.566"/>
+          <circle cx="92.525" cy="62.753" r="1.621"/><circle cx="96.771" cy="62.968" r="1.41"/><circle cx="101.017" cy="63.183" r="1.199"/><circle cx="105.263" cy="63.399" r="0.988"/><circle cx="109.509" cy="63.614" r="0.777"/><circle cx="113.755" cy="63.829" r="0.566"/>
+          <circle cx="92.163" cy="66.318" r="1.621"/><circle cx="96.365" cy="66.961" r="1.41"/><circle cx="100.567" cy="67.605" r="1.199"/><circle cx="104.77" cy="68.249" r="0.988"/><circle cx="108.972" cy="68.893" r="0.777"/><circle cx="113.175" cy="69.536" r="0.566"/>
+          <circle cx="91.441" cy="69.827" r="1.621"/><circle cx="95.556" cy="70.893" r="1.41"/><circle cx="99.672" cy="71.959" r="1.199"/><circle cx="103.788" cy="73.024" r="0.988"/><circle cx="107.904" cy="74.09" r="0.777"/><circle cx="112.019" cy="75.155" r="0.566"/>
+          <circle cx="90.367" cy="73.246" r="1.621"/><circle cx="94.354" cy="74.723" r="1.41"/><circle cx="98.341" cy="76.199" r="1.199"/><circle cx="102.328" cy="77.676" r="0.988"/><circle cx="106.315" cy="79.152" r="0.777"/><circle cx="110.302" cy="80.629" r="0.566"/>
+          <circle cx="88.955" cy="76.539" r="1.621"/><circle cx="92.772" cy="78.412" r="1.41"/><circle cx="96.589" cy="80.284" r="1.199"/><circle cx="100.406" cy="82.156" r="0.988"/><circle cx="104.223" cy="84.029" r="0.777"/><circle cx="108.04" cy="85.901" r="0.566"/>
+          <circle cx="87.217" cy="79.672" r="1.621"/><circle cx="90.825" cy="81.921" r="1.41"/><circle cx="94.433" cy="84.17" r="1.199"/><circle cx="98.041" cy="86.419" r="0.988"/><circle cx="101.649" cy="88.668" r="0.777"/><circle cx="105.257" cy="90.917" r="0.566"/>
+          <circle cx="85.17" cy="82.613" r="1.621"/><circle cx="88.532" cy="85.216" r="1.41"/><circle cx="91.894" cy="87.818" r="1.199"/><circle cx="95.256" cy="90.42" r="0.988"/><circle cx="98.618" cy="93.023" r="0.777"/><circle cx="101.98" cy="95.625" r="0.566"/>
+          <circle cx="82.835" cy="85.332" r="1.621"/><circle cx="85.917" cy="88.261" r="1.41"/><circle cx="88.998" cy="91.19" r="1.199"/><circle cx="92.079" cy="94.119" r="0.988"/><circle cx="95.161" cy="97.048" r="0.777"/><circle cx="98.242" cy="99.977" r="0.566"/>
+          <circle cx="80.237" cy="87.801" r="1.621"/><circle cx="83.006" cy="91.027" r="1.41"/><circle cx="85.776" cy="94.253" r="1.199"/><circle cx="88.545" cy="97.478" r="0.988"/><circle cx="91.314" cy="100.704" r="0.777"/><circle cx="94.083" cy="103.93" r="0.566"/>
+          <circle cx="77.404" cy="89.994" r="1.621"/><circle cx="79.833" cy="93.484" r="1.41"/><circle cx="82.262" cy="96.973" r="1.199"/><circle cx="84.69" cy="100.462" r="0.988"/><circle cx="87.119" cy="103.952" r="0.777"/><circle cx="89.548" cy="107.441" r="0.566"/>
+          <circle cx="74.363" cy="91.889" r="1.621"/><circle cx="76.426" cy="95.607" r="1.41"/><circle cx="78.489" cy="99.324" r="1.199"/><circle cx="80.552" cy="103.041" r="0.988"/><circle cx="82.616" cy="106.758" r="0.777"/><circle cx="84.679" cy="110.476" r="0.566"/>
+          <circle cx="71.146" cy="93.468" r="1.621"/><circle cx="72.823" cy="97.374" r="1.41"/><circle cx="74.499" cy="101.281" r="1.199"/><circle cx="76.176" cy="105.188" r="0.988"/><circle cx="77.853" cy="109.095" r="0.777"/><circle cx="79.529" cy="113.002" r="0.566"/>
+          <circle cx="67.786" cy="94.712" r="1.621"/><circle cx="69.059" cy="98.768" r="1.41"/><circle cx="70.332" cy="102.825" r="1.199"/><circle cx="71.605" cy="106.881" r="0.988"/><circle cx="72.877" cy="110.938" r="0.777"/><circle cx="74.15" cy="114.994" r="0.566"/>
+          <circle cx="64.318" cy="95.611" r="1.621"/><circle cx="65.173" cy="99.775" r="1.41"/><circle cx="66.029" cy="103.94" r="1.199"/><circle cx="66.885" cy="108.104" r="0.988"/><circle cx="67.741" cy="112.268" r="0.777"/><circle cx="68.597" cy="116.433" r="0.566"/>
+          <circle cx="60.776" cy="96.153" r="1.621"/><circle cx="61.206" cy="100.382" r="1.41"/><circle cx="61.636" cy="104.612" r="1.199"/><circle cx="62.066" cy="108.842" r="0.988"/><circle cx="62.496" cy="113.071" r="0.777"/><circle cx="62.926" cy="117.301" r="0.566"/>
+        </g>
+      </g>
+      <g id="QRSTKR_wordmark">
+        <path stroke="white" stroke-width="0.5" stroke-miterlimit="10" d="M300,91.184l-13.962-24.392c3.231-1.479,5.803-3.682,7.72-6.612c1.916-2.928,2.874-6.474,2.874-10.635c0-4.271-0.931-7.856-2.792-10.759c-1.862-2.902-4.422-5.092-7.678-6.57c-3.258-1.478-6.995-2.218-11.21-2.218h-18.806h-4.6h-11.333l-20.943,25.159V29.998h-7.637h-5.093h-38.436v4.631c-1.868-1.536-3.975-2.779-6.323-3.727c-3.121-1.259-6.516-1.889-10.184-1.889c-4.162,0-7.843,0.768-11.046,2.3c-3.203,1.533-5.695,3.669-7.473,6.406c-0.785,1.208-1.387,2.506-1.826,3.884c-0.392-0.998-0.858-1.942-1.418-2.816c-1.862-2.902-4.422-5.092-7.679-6.57c-3.258-1.478-6.995-2.218-11.21-2.218H87.537v18.17c-0.014-0.034-0.026-0.068-0.04-0.102c-1.615-3.832-3.888-7.172-6.817-10.019c-2.93-2.846-6.365-5.064-10.307-6.652c-3.943-1.587-8.241-2.382-12.894-2.382c-4.654,0-8.952,0.794-12.894,2.382c-3.942,1.589-7.378,3.806-10.307,6.652c-2.93,2.848-5.202,6.187-6.817,10.019c-1.616,3.833-2.423,7.995-2.423,12.484c0,4.49,0.821,8.652,2.464,12.484c1.642,3.833,3.928,7.186,6.858,10.061c2.928,2.874,6.365,5.106,10.307,6.694c3.942,1.587,8.213,2.381,12.812,2.381c3.048,0,5.948-0.357,8.708-1.054l4.269,7.46h13.386l-7.129-12.294c1.373-0.963,2.683-2.007,3.886-3.187c2.928-2.875,5.215-6.228,6.858-10.061c0.029-0.067,0.053-0.136,0.081-0.204v18.354h12.73V69.009h9.034l12.401,22.175h14.29l-13.962-24.392c3.23-1.479,5.803-3.682,7.72-6.612c1.075-1.643,1.837-3.487,2.309-5.518c0.548,1.109,1.221,2.159,2.043,3.136c2.464,2.93,6.131,5.188,11.005,6.775l11.991,3.942c1.86,0.603,3.23,1.411,4.106,2.424c0.875,1.014,1.314,2.231,1.314,3.654c0,1.314-0.357,2.451-1.068,3.408c-0.712,0.959-1.698,1.711-2.957,2.259c-1.26,0.547-2.765,0.821-4.517,0.821c-3.285,0-6.283-0.957-8.993-2.874c-2.71-1.916-4.833-4.544-6.365-7.885l-10.43,4.681c1.204,3.505,3.025,6.543,5.461,9.117c2.436,2.573,5.338,4.558,8.706,5.954c3.367,1.397,6.967,2.095,10.8,2.095c4.325,0,8.117-0.78,11.375-2.341c3.257-1.561,5.816-3.723,7.678-6.488c1.861-2.763,2.792-5.925,2.792-9.485c0-4.106-1.219-7.583-3.654-10.43c-2.437-2.846-6.119-5.064-11.046-6.652l-11.744-3.778c-1.862-0.601-3.258-1.437-4.189-2.505c-0.932-1.068-1.396-2.312-1.396-3.736c0-1.314,0.356-2.477,1.068-3.49c0.711-1.012,1.725-1.792,3.039-2.341c1.314-0.547,2.819-0.821,4.517-0.821c2.957,0,5.585,0.808,7.885,2.423c2.299,1.616,4.024,3.848,5.174,6.693l10.348-4.68c-0.436-1.224-0.978-2.359-1.575-3.45h10.198v50.098h12.73v-50.098h10.183v50.098h12.73V74.43l7.556-9.117l14.947,25.871h9.773h5.093h7.637V69.009h9.033l12.402,22.175H300z M75.712,68.681c-0.986,2.463-2.382,4.586-4.189,6.365c-0.28,0.276-0.579,0.524-0.873,0.781l-5.287-9.117H52.224l7.889,13.788c-0.859,0.103-1.731,0.173-2.633,0.173c-2.792,0-5.379-0.492-7.761-1.478c-2.382-0.986-4.476-2.368-6.283-4.148c-1.807-1.779-3.203-3.902-4.189-6.365c-0.986-2.464-1.478-5.175-1.478-8.131s0.492-5.652,1.478-8.09c0.986-2.435,2.382-4.558,4.189-6.365c1.807-1.807,3.901-3.189,6.283-4.148c2.382-0.956,4.969-1.437,7.761-1.437c2.792,0,5.379,0.481,7.761,1.437c2.382,0.959,4.476,2.341,6.283,4.148c1.807,1.807,3.203,3.93,4.189,6.365c0.986,2.437,1.478,5.133,1.478,8.09S76.698,66.217,75.712,68.681z M118.787,53.897c-0.739,1.261-1.766,2.246-3.08,2.957c-1.314,0.712-2.874,1.069-4.681,1.069h-10.759v-16.837h10.759c1.807,0,3.367,0.357,4.681,1.068c1.314,0.712,2.341,1.698,3.08,2.957c0.739,1.261,1.109,2.739,1.109,4.435C119.896,51.188,119.527,52.639,118.787,53.897z M235.448,54.974l16.097-19.425v46.932L235.448,54.974z M282.795,53.897c-0.739,1.261-1.767,2.246-3.08,2.957c-1.315,0.712-2.875,1.069-4.681,1.069h-10.759v-16.837h10.759c1.807,0,3.367,0.357,4.681,1.068c1.314,0.712,2.341,1.698,3.08,2.957c0.738,1.261,1.108,2.739,1.108,4.435C283.903,51.188,283.533,52.639,282.795,53.897z"/>
+      </g>
+    </svg>
+    <div class="subtitle">Project Overview &amp; Implementation Costs</div>
+    <div class="tagline">qrstkr.com &bull; Hydraulics SR-80</div>
+  </div>
+
+  <div class="content">
+
+    <!-- GOAL -->
+    <div class="goal-banner">
+      <div class="label">Project Goal</div>
+      <p>Tag any equipment with a scannable QR code sticker tied to a digital record that tracks ownership, maintenance, photos, and specs. When the item changes hands, the record goes with it. Revenue comes from sticker sales, annual subscriptions, and eventually a marketplace.</p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section-title">
+      <div class="icon">&#x21BB;</div>
+      How It Works
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-icon">&#x1F6D2;</div>
+        <div class="step-text">Customer buys a sticker</div>
+      </div>
+      <div class="flow-arrow">&#x25B6;</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-icon">&#x1F4F1;</div>
+        <div class="step-text">Sticks it on their equipment &amp; scans it</div>
+      </div>
+      <div class="flow-arrow">&#x25B6;</div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-icon">&#x1F4CB;</div>
+        <div class="step-text">Registers the item &amp; logs maintenance</div>
+      </div>
+      <div class="flow-arrow">&#x25B6;</div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-icon">&#x1F91D;</div>
+        <div class="step-text">Buyer scans, sees full history, ownership transfers</div>
+      </div>
+    </div>
+
+    <!-- WHO USES IT -->
+    <div class="section-title">
+      <div class="icon">&#x1F465;</div>
+      Who Uses It
+    </div>
+    <div class="users-grid">
+      <div class="user-card">
+        <div class="user-icon">&#x1F464;</div>
+        <h4>Owners</h4>
+        <p>Regular people who buy stickers for their stuff. They log maintenance, upload photos, and manage their items. Our primary customer.</p>
+      </div>
+      <div class="user-card">
+        <div class="user-icon">&#x1F527;</div>
+        <h4>Repair Shops</h4>
+        <p>Mechanics and service providers scan the sticker and log work performed. Adds third-party credibility to the maintenance history.</p>
+      </div>
+      <div class="user-card">
+        <div class="user-icon">&#x1F3EA;</div>
+        <h4>Dealers</h4>
+        <p>Car, boat, and equipment dealers order stickers in bulk and put them on every unit. Buyers get them at point of sale.</p>
+      </div>
+      <div class="user-card">
+        <div class="user-icon">&#x1F50D;</div>
+        <h4>Buyers</h4>
+        <p>Anyone considering a used item scans the sticker to see its full public history, photos, and specs before buying.</p>
+      </div>
+    </div>
+
+    <!-- WHAT WE NEED: HARDWARE -->
+    <div class="section-title">
+      <div class="icon">&#x1F6E0;</div>
+      What We Need to Build &amp; Run It
+    </div>
+    <div class="cost-section">
+      <div class="cost-category">
+        <div class="cost-category-title">&#x1F4BB; Day-to-Day Operations</div>
+        <div class="cost-items">
+          <div class="cost-item"><div class="ci-icon">&#x1F5A5;</div><div class="ci-info"><div class="ci-name">Computer</div><div class="ci-cost">$500 – $1,500</div><div class="ci-note">Any modern PC or Mac</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x1F4F1;</div><div class="ci-info"><div class="ci-name">Smartphone</div><div class="ci-cost">$0</div><div class="ci-note">Use what we have</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x1F310;</div><div class="ci-info"><div class="ci-name">Internet</div><div class="ci-cost">Existing</div><div class="ci-note">Reliable connection</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x1F5A8;</div><div class="ci-info"><div class="ci-name">Standard Printer</div><div class="ci-cost">$250 – $350</div><div class="ci-note">Invoices &amp; packing slips</div></div></div>
+        </div>
+      </div>
+      <div class="cost-category">
+        <div class="cost-category-title">&#x1F3F7; Sticker Production</div>
+        <div class="cost-items">
+          <div class="cost-item"><div class="ci-icon">&#x1F5A8;</div><div class="ci-info"><div class="ci-name">Color Laser Printer</div><div class="ci-cost">$500 – $3,000</div><div class="ci-note">Vinyl requires laser, not inkjet</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x2702;</div><div class="ci-info"><div class="ci-name">Cutting Machine</div><div class="ci-cost">$200 – $400</div><div class="ci-note">Optional — can use pre-cut sheets</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x1F4C4;</div><div class="ci-info"><div class="ci-name">Vinyl + Laminate</div><div class="ci-cost">~$0.15 – $0.70/ea</div><div class="ci-note">Weatherproof, UV-resistant</div></div></div>
+        </div>
+      </div>
+      <div class="cost-category">
+        <div class="cost-category-title">&#x1F525; Laser Engraving (Shop Use)</div>
+        <div class="cost-items">
+          <div class="cost-item"><div class="ci-icon">&#x1F52C;</div><div class="ci-info"><div class="ci-name">Fiber Laser Engraver</div><div class="ci-cost">$3,000 – $15,000</div><div class="ci-note">Permanent QR on metal parts</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x1F97D;</div><div class="ci-info"><div class="ci-name">Safety Gear</div><div class="ci-cost">$50 – $200</div><div class="ci-note">Laser-rated glasses (1064nm)</div></div></div>
+          <div class="cost-item"><div class="ci-icon">&#x1F4A8;</div><div class="ci-info"><div class="ci-name">Fume Extractor</div><div class="ci-cost">$200 – $1,000</div><div class="ci-note">Required ventilation</div></div></div>
+        </div>
+      </div>
+      <div class="cost-category">
+        <div class="cost-category-title">&#x1F9F2; Stainless Steel Stickers (Exploring)</div>
+        <div class="cost-items">
+          <div class="cost-item" style="flex:1;min-width:100%;"><div class="ci-icon">&#x1FA99;</div><div class="ci-info"><div class="ci-name">Adhesive-backed metal labels with engraved or printed QR codes</div><div class="ci-cost">TBD — Pricing research in progress</div><div class="ci-note">More durable than vinyl for engine bays, heavy equipment, outdoor machinery. Premium product tier.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLOUD / ONLINE SERVICES -->
+    <div class="section-title">
+      <div class="icon">&#x2601;</div>
+      Cloud Services (Monthly)
+    </div>
+    <div class="cloud-grid">
+      <div class="cloud-card"><div class="cc-icon">&#x1F310;</div><div class="cc-name">Website Hosting</div><div class="cc-cost">Free &rarr; $20/mo</div><div class="cc-note">Vercel</div></div>
+      <div class="cloud-card"><div class="cc-icon">&#x1F5C3;</div><div class="cc-name">Database</div><div class="cc-cost">Free &rarr; $25/mo</div><div class="cc-note">Supabase</div></div>
+      <div class="cloud-card"><div class="cc-icon">&#x1F517;</div><div class="cc-name">Domain Name</div><div class="cc-cost">~$12/year</div><div class="cc-note">qrstkr.com</div></div>
+      <div class="cloud-card"><div class="cc-icon">&#x1F916;</div><div class="cc-name">AI Assistant</div><div class="cc-cost">$1 – $25/mo</div><div class="cc-note">Claude API</div></div>
+      <div class="cloud-card"><div class="cc-icon">&#x1F4E6;</div><div class="cc-name">QR Generator</div><div class="cc-cost">~$5/mo</div><div class="cc-note">Railway (already built)</div></div>
+      <div class="cloud-card"><div class="cc-icon">&#x1F4B3;</div><div class="cc-name">Payments (Square)</div><div class="cc-cost">2.9% + $0.30/txn</div><div class="cc-note">Already use at shop</div></div>
+      <div class="cloud-card"><div class="cc-icon">&#x2709;</div><div class="cc-name">Email Service</div><div class="cc-cost">Free to start</div><div class="cc-note">Notifications &amp; verification</div></div>
+    </div>
+
+    <!-- TOTAL COST BANNER -->
+    <div class="total-banner">
+      <div class="total-item"><div class="total-label">Prototype Phase</div><div class="total-value">~$6 – $10/mo</div></div>
+      <div class="total-divider"></div>
+      <div class="total-item"><div class="total-label">Early Customers</div><div class="total-value">~$30 – $60/mo</div></div>
+      <div class="total-divider"></div>
+      <div class="total-item"><div class="total-label">1,000+ Users</div><div class="total-value">~$65 – $110/mo</div></div>
+    </div>
+
+    <!-- REVENUE MODEL -->
+    <div class="section-title">
+      <div class="icon">&#x1F4B0;</div>
+      How We Make Money
+    </div>
+    <div class="revenue-items">
+      <div class="revenue-pill">&#x1F3F7; Sticker Sales (includes 1yr access)</div>
+      <div class="revenue-pill">&#x1F504; Annual Renewals</div>
+      <div class="revenue-pill">&#x1F504; Replacement Stickers</div>
+      <div class="revenue-pill">&#x1F3EA; Dealer Bulk Orders</div>
+      <div class="revenue-pill future">&#x1F4B3; Marketplace Fees (future)</div>
+    </div>
+
+    <!-- BUILD PHASES -->
+    <div class="section-title">
+      <div class="icon">&#x1F680;</div>
+      Build-Out Phases
+    </div>
+    <div class="phases">
+      <div class="phase"><div class="phase-num">Phase 1</div><h4>The Basics</h4><p>Scan, claim, register an item. Basic item page. Florida stickers first.</p></div>
+      <div class="phase"><div class="phase-num">Phase 2</div><h4>Make It Useful</h4><p>Maintenance tracking, shop accounts, photo uploads, AI assistant. More states.</p></div>
+      <div class="phase"><div class="phase-num">Phase 3</div><h4>Buy &amp; Sell</h4><p>Ownership transfers, marketplace listings, all 50 states.</p></div>
+      <div class="phase"><div class="phase-num">Phase 4</div><h4>Scale It Up</h4><p>Dealer portal, mobile apps, third-party integrations.</p></div>
+    </div>
+
+    <!-- MARKETING STRATEGY -->
+    <div class="section-title">
+      <div class="icon">&#x1F4E3;</div>
+      Getting It Out There
+    </div>
+    <div class="marketing-grid">
+      <div class="marketing-card"><div class="mc-icon">&#x1F3ED;</div><h4>Our Shop</h4><p>Every item through the door gets a sticker. Ground zero for adoption.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F91D;</div><h4>Dealer Partners</h4><p>Bulk stickers on every unit sold. Scale through existing channels.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F4F2;</div><h4>Social Media</h4><p>Short demo videos on Instagram, TikTok, YouTube Shorts.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F3AA;</div><h4>Trade Shows</h4><p>Car shows, boat shows, expos. Demo stickers people scan on the spot.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F527;</div><h4>Shop Partners</h4><p>Free accounts for local repair shops. They recommend us to customers.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F50E;</div><h4>SEO &amp; Content</h4><p>Blog posts targeting equipment maintenance searches.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F4AC;</div><h4>Referral Program</h4><p>Refer a friend, get a free sticker or renewal discount.</p></div>
+      <div class="marketing-card"><div class="mc-icon">&#x1F4A1;</div><h4>Word of Mouth</h4><p>Once someone scans it and sees it work, they get it.</p></div>
+    </div>
+
+    <!-- SHOPPING LIST -->
+    <div class="section-title">
+      <div class="icon">&#x1F6D2;</div>
+      Priority Shopping List
+    </div>
+    <div class="shopping-list">
+      <div class="shop-item"><div class="si-check">&#x2713;</div><div class="si-name">Domain name (qrstkr.com)</div><div class="si-cost done">Done</div></div>
+      <div class="shop-item"><div class="si-check">&#x2713;</div><div class="si-name">Computer — desktop or laptop</div><div class="si-cost done">Have it</div></div>
+      <div class="shop-item"><div class="si-check">&#x2713;</div><div class="si-name">Smartphone — for QR testing</div><div class="si-cost done">Have it</div></div>
+      <div class="shop-item"><div class="si-num">4</div><div class="si-name">Test stickers — outsource first batch</div><div class="si-cost">~$100 – $300</div></div>
+      <div class="shop-item"><div class="si-num">5</div><div class="si-name">Fiber laser engraver</div><div class="si-cost">$3,000 – $8,000+</div></div>
+      <div class="shop-item"><div class="si-num">6</div><div class="si-name">Laser safety equipment</div><div class="si-cost">$250 – $1,200</div></div>
+      <div class="shop-item"><div class="si-num">7</div><div class="si-name">In-house production (optional, later)</div><div class="si-cost">$700 – $3,400</div></div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">Prepared by Bec Archer &bull; Hydraulics SR-80 &bull; March 2026</div>
+    <div class="footer-right">qrstkr.com</div>
+  </div>
+
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    icon.innerHTML = '&#x1F319;';
+    label.textContent = 'Dark';
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    icon.innerHTML = '&#x2600;';
+    label.textContent = 'Light';
+  }
+}
+</script>
+</body>
+</html>

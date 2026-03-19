@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRSTKR — Cybersecurity Onboarding Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       QRSTKR Design System — Onboarding Page
+       Tokens pulled directly from globals.css
+       ============================================= */
+    :root {
+      --bg-primary: #0a0f14;
+      --bg-secondary: #0f1419;
+      --bg-tertiary: #151c24;
+      --bg-elevated: #1c252f;
+      --border-subtle: rgba(45, 212, 191, 0.08);
+      --border-default: rgba(45, 212, 191, 0.15);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-tertiary: #64748b;
+      --accent-primary: #2dd4bf;
+      --accent-secondary: #5eead4;
+      --accent-glow: rgba(45, 212, 191, 0.15);
+      --accent-muted: rgba(45, 212, 191, 0.08);
+      --success: #4ade80;
+      --warning: #fbbf24;
+      --error: #f87171;
+      --info: #60a5fa;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-full: 100px;
+    }
+
+    /* ---- Light Mode (matches globals.css [data-theme="light"]) ---- */
+    [data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --bg-elevated: #e2e8f0;
+      --border-subtle: rgba(13, 148, 136, 0.1);
+      --border-default: rgba(13, 148, 136, 0.18);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary: #64748b;
+      --accent-primary: #0d9488;
+      --accent-secondary: #14b8a6;
+      --accent-glow: rgba(13, 148, 136, 0.12);
+      --accent-muted: rgba(13, 148, 136, 0.06);
+    }
+    [data-theme="light"] .task-card:hover {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    }
+    [data-theme="light"] tbody tr:hover {
+      background: rgba(13, 148, 136, 0.04);
+    }
+    [data-theme="light"] .priority-critical .priority-label {
+      background: rgba(248, 113, 113, 0.08);
+      border-color: rgba(248, 113, 113, 0.18);
+      color: #dc2626;
+    }
+    [data-theme="light"] .priority-high .priority-label {
+      background: rgba(251, 191, 36, 0.08);
+      border-color: rgba(251, 191, 36, 0.18);
+      color: #b45309;
+    }
+    [data-theme="light"] .priority-medium .priority-label {
+      background: rgba(96, 165, 250, 0.08);
+      border-color: rgba(96, 165, 250, 0.18);
+      color: #2563eb;
+    }
+    [data-theme="light"] .priority-low .priority-label {
+      background: rgba(100, 116, 139, 0.08);
+      border-color: rgba(100, 116, 139, 0.18);
+    }
+    [data-theme="light"] .priority-critical .task-card { border-left-color: #dc2626; }
+    [data-theme="light"] .priority-high .task-card { border-left-color: #b45309; }
+    [data-theme="light"] .priority-medium .task-card { border-left-color: #2563eb; }
+    [data-theme="light"] .ambient-glow::before,
+    [data-theme="light"] .ambient-glow::after { opacity: 0.08; }
+
+    /* ---- Theme toggle button ---- */
+    .theme-toggle {
+      position: fixed; top: 1.25rem; right: 1.25rem; z-index: 100;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-default);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .theme-toggle:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      background: var(--bg-tertiary);
+    }
+    .theme-toggle svg { width: 20px; height: 20px; }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    [data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Ambient glow — matches landing page */
+    .ambient-glow {
+      position: fixed; inset: 0;
+      pointer-events: none; overflow: hidden; z-index: 0;
+    }
+    .ambient-glow::before {
+      content: ''; position: absolute;
+      top: -20%; left: -10%; width: 50%; height: 50%;
+      border-radius: 50%;
+      background: var(--accent-glow); filter: blur(120px); opacity: 0.3;
+    }
+    .ambient-glow::after {
+      content: ''; position: absolute;
+      bottom: -20%; right: -10%; width: 40%; height: 40%;
+      border-radius: 50%;
+      background: var(--accent-glow); filter: blur(120px); opacity: 0.2;
+    }
+
+    .page-wrapper {
+      position: relative; z-index: 1;
+      max-width: 900px; margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    /* ---- Header ---- */
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .page-header h1 {
+      font-size: 2.5rem; font-weight: 800;
+      line-height: 1.1; letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    .accent {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-header .subtitle {
+      font-size: 1.1rem; color: var(--text-secondary); font-weight: 400;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--accent-muted);
+      border: 1px solid rgba(45, 212, 191, 0.2);
+      color: var(--accent-primary); margin-top: 1rem;
+    }
+
+    /* ---- TOC ---- */
+    .toc {
+      background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem; margin-bottom: 3rem;
+    }
+    .toc-title {
+      font-size: 0.78rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent-primary);
+      margin-bottom: 1rem; font-weight: 600;
+    }
+    .toc ol {
+      list-style: none; counter-reset: toc;
+      padding: 0; columns: 2; column-gap: 2rem;
+    }
+    .toc li {
+      counter-increment: toc;
+      margin-bottom: 0.4rem; break-inside: avoid;
+    }
+    .toc li::before {
+      content: counter(toc, decimal-leading-zero);
+      font-family: var(--font-mono); font-size: 0.78rem;
+      color: var(--accent-primary); margin-right: 0.6rem; opacity: 0.7;
+    }
+    .toc a {
+      color: var(--text-primary); text-decoration: none;
+      font-weight: 500; font-size: 0.92rem; transition: color 0.2s;
+    }
+    .toc a:hover { color: var(--accent-primary); }
+
+    /* ---- Sections ---- */
+    section { margin-bottom: 3.5rem; }
+    .section-label {
+      font-size: 0.78rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent-primary);
+      font-weight: 600; margin-bottom: 0.4rem;
+    }
+    h2 {
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1rem; letter-spacing: -0.02em;
+    }
+    h3 {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 1.5rem; margin-bottom: 0.5rem;
+    }
+    p { margin-bottom: 1rem; color: var(--text-secondary); }
+    strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ---- Code ---- */
+    code {
+      font-family: var(--font-mono); font-size: 0.85em;
+      background: var(--bg-tertiary); color: var(--accent-primary);
+      padding: 0.15em 0.45em; border-radius: 6px;
+      border: 1px solid var(--border-default);
+    }
+    pre {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem; overflow-x: auto;
+      margin-bottom: 1.5rem; font-size: 0.82rem; line-height: 1.65;
+    }
+    pre code {
+      background: none; border: none; padding: 0;
+      color: var(--text-secondary);
+    }
+    pre .comment { color: var(--text-tertiary); }
+
+    /* ---- Tables ---- */
+    .table-wrap {
+      overflow-x: auto; margin-bottom: 1.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead th {
+      background: var(--bg-tertiary); color: var(--accent-primary);
+      font-weight: 600; text-align: left;
+      padding: 0.75rem 1rem; font-size: 0.78rem;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border-default);
+    }
+    tbody td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top; color: var(--text-secondary);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(45, 212, 191, 0.03); }
+    td strong { color: var(--text-primary); }
+
+    /* ---- Lists ---- */
+    ul, ol {
+      margin-bottom: 1rem; padding-left: 1.5rem;
+      color: var(--text-secondary);
+    }
+    li { margin-bottom: 0.4rem; }
+    li strong { color: var(--text-primary); }
+
+    /* ---- Callout (card-static style) ---- */
+    .callout {
+      background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.35rem; margin-bottom: 1.5rem;
+      font-size: 0.92rem; color: var(--text-secondary);
+    }
+    .callout strong { color: var(--accent-primary); }
+
+    /* ---- Priority badges (match badge system) ---- */
+    .priority-section { margin-top: 1.5rem; margin-bottom: 2.5rem; }
+    .priority-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+    .priority-critical .priority-label {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      color: var(--error);
+    }
+    .priority-high .priority-label {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      color: var(--warning);
+    }
+    .priority-medium .priority-label {
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      color: var(--info);
+    }
+    .priority-low .priority-label {
+      background: rgba(100, 116, 139, 0.1);
+      border: 1px solid rgba(100, 116, 139, 0.2);
+      color: var(--text-tertiary);
+    }
+
+    /* ---- Task cards (card style) ---- */
+    .task-card {
+      background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem; margin-bottom: 0.75rem;
+      border-left: 3px solid var(--border-subtle);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .task-card:hover {
+      border-color: var(--border-default);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+    .priority-critical .task-card { border-left-color: var(--error); }
+    .priority-high .task-card { border-left-color: var(--warning); }
+    .priority-medium .task-card { border-left-color: var(--info); }
+    .priority-low .task-card { border-left-color: var(--text-tertiary); }
+
+    .task-card h4 {
+      font-size: 1.02rem; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 0.5rem;
+    }
+    .task-card p { color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .task-card ul { margin-top: 0.5rem; margin-bottom: 0; }
+    .task-card li { color: var(--text-secondary); font-size: 0.9rem; }
+
+    /* ---- Arch decisions ---- */
+    .arch-decisions li { margin-bottom: 0.85rem; padding-left: 0.25rem; }
+
+    /* ---- MD toggle + markdown overlay ---- */
+    .section-header-row {
+      display: flex; align-items: center; gap: 0.6rem;
+      flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .section-header-row h2 { margin-bottom: 0; }
+    .section-header-row .section-label { margin-bottom: 0; width: 100%; }
+
+    .md-toggle {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: var(--radius-full);
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em;
+      background: var(--accent-muted);
+      border: 1px solid var(--border-default);
+      color: var(--text-tertiary);
+      cursor: pointer; transition: all 0.15s;
+      white-space: nowrap; line-height: 1.6;
+    }
+    .md-toggle:hover {
+      color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      background: var(--accent-glow);
+    }
+    .md-toggle.active {
+      color: var(--bg-primary);
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+
+    .md-overlay {
+      display: none; position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .md-overlay.visible { display: block; }
+    .md-overlay pre {
+      margin: 0; max-height: 500px;
+      white-space: pre-wrap; word-wrap: break-word;
+    }
+    .md-overlay .copy-btn {
+      position: absolute; top: 8px; right: 8px;
+      padding: 4px 12px; border-radius: var(--radius-sm);
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .md-overlay .copy-btn:hover {
+      color: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+    .md-overlay .copy-btn.copied {
+      color: var(--success);
+      border-color: var(--success);
+    }
+    .section-content { transition: opacity 0.15s; }
+    .section-content.hidden { display: none; }
+
+    /* ---- Footer (matches landing) ---- */
+    .page-footer {
+      text-align: center; padding-top: 2rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-tertiary); font-size: 0.85rem;
+    }
+
+    /* ---- Scrollbar ---- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+    /* ---- Focus ---- */
+    :focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 640px) {
+      .page-wrapper { padding: 2rem 1.25rem 3rem; }
+      .page-header h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.25rem; }
+      .toc ol { columns: 1; }
+      table { font-size: 0.82rem; }
+      thead th, tbody td { padding: 0.5rem 0.65rem; }
+      .task-card { padding: 1.25rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition-duration: 0.01ms !important; }
+      .task-card:hover { transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+    <svg class="icon-moon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+    </svg>
+    <svg class="icon-sun" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+    </svg>
+  </button>
+  <script>
+    (function() {
+      var stored = localStorage.getItem('qrstkr-theme');
+      if (stored === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      document.getElementById('themeToggle').addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'light' ? 'dark' : 'light';
+        if (next === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        localStorage.setItem('qrstkr-theme', next);
+      });
+    })();
+  </script>
+
+  <div class="ambient-glow"></div>
+  <div class="page-wrapper">
+
+    <!-- Header -->
+    <header class="page-header">
+      <h1><span class="accent">QRSTKR</span> — Cybersecurity Onboarding</h1>
+      <p class="subtitle">Welcome to the team. Here's everything you need to know.</p>
+      <div class="badge">Last updated: March 5, 2026</div>
+    </header>
+
+    <!-- TOC -->
+    <nav class="toc">
+      <div class="toc-title">Contents</div>
+      <ol>
+        <li><a href="#what-is-qrstkr">What is QRSTKR?</a></li>
+        <li><a href="#tech-stack">Tech Stack & Architecture</a></li>
+        <li><a href="#service-nodes">Service Nodes</a></li>
+        <li><a href="#file-types">File Types in the System</a></li>
+        <li><a href="#database">Database Tables</a></li>
+        <li><a href="#authentication">Authentication Details</a></li>
+        <li><a href="#rls">Row Level Security</a></li>
+        <li><a href="#cybersecurity-tasks">Your Cybersecurity Task List</a></li>
+        <li><a href="#architecture-decisions">Key Architecture Decisions</a></li>
+        <li><a href="#repo-structure">Repo & Project Structure</a></li>
+      </ol>
+    </nav>
+
+    <!-- What is QRSTKR -->
+    <section id="what-is-qrstkr">
+      <p class="section-label">Overview</p>
+      <h2>What is <span class="accent">QRSTKR</span>?</h2>
+      <p>QRSTKR is a QR code sticker platform for tracking physical items — trucks, boats, equipment, you name it. Customers buy a custom QR sticker shaped like a US state, stick it on their thing, and that sticker links to a digital profile with specs, photos, maintenance records, and ownership history. When the item gets sold, the ownership transfers but the sticker stays. Repair shops can scan and log service records too.</p>
+      <div class="callout">
+        <strong>The business loop:</strong> someone sees a sticker → scans it → thinks "that's cool" → buys their own → the flywheel spins.
+      </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section id="tech-stack">
+      <p class="section-label">Infrastructure</p>
+      <h2>Tech Stack & <span class="accent">Architecture</span></h2>
+
+      <h3>Frontend</h3>
+      <p><strong>Next.js 16</strong> with React 19, TypeScript, and Tailwind CSS. The app uses server-side rendering and API routes built into Next.js — no separate backend server.</p>
+
+      <h3>Hosting & Deployment</h3>
+      <p><strong>Vercel</strong> — auto-deploys from GitHub (<code>github.com/bec-archer/qrstkr</code>). Custom domain <code>qrstkr.com</code> is on <strong>Cloudflare DNS</strong>.</p>
+
+      <h3>Database, Auth & Storage</h3>
+      <p><strong>Supabase</strong> is the central hub — it handles three things:</p>
+      <ul>
+        <li><strong>PostgreSQL Database</strong> — all application data (stickers, items, users, orders, maintenance records, ownership history)</li>
+        <li><strong>Supabase Auth</strong> — email/password plus OAuth (Google and Apple). Session management via middleware that refreshes tokens on every request.</li>
+        <li><strong>Supabase Storage</strong> — photo uploads, QR code images, and file attachments. Client-side compression happens before upload (Canvas API, 1200px max, 80% JPEG quality). Photo metadata is stored as JSONB on the items table.</li>
+      </ul>
+
+      <h3>QR Code Generation</h3>
+      <p><strong>Railway</strong> — a separate Python microservice (containerized via Docker, ~$5/mo) that generates the state-shaped QR codes. Supabase triggers generation when a new order comes in, and the generated QR image is saved back to Supabase Storage.</p>
+
+      <h3>Payments</h3>
+      <p><strong>Square</strong> — handles all payment processing. Payment info goes directly from the user's browser to Square's servers — it never touches the QRSTKR backend. Square confirms payment → order record created in Supabase.</p>
+
+      <h3>AI Assistant (Planned)</h3>
+      <p><strong>Claude API (Anthropic)</strong> — will power an AI assistant on item pages that can answer questions about equipment using the item's data and maintenance history as context.</p>
+
+      <h3>Email/Notifications</h3>
+      <p>An email service (TBD) for transfer requests, renewal reminders, and shop submission notifications.</p>
+    </section>
+
+    <!-- Service Nodes -->
+    <section id="service-nodes">
+      <p class="section-label">System Map</p>
+      <h2>Service <span class="accent">Nodes</span></h2>
+      <p>What talks to what — every node in the system.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Node</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>User's Browser</strong></td><td>Customer-facing — browses, scans QR codes, claims items, places orders</td></tr>
+            <tr><td><strong>Shop's Browser</strong></td><td>Repair shop interface — scans stickers, submits maintenance records</td></tr>
+            <tr><td><strong>Vercel</strong></td><td>Serves the Next.js frontend and API routes</td></tr>
+            <tr><td><strong>Supabase (DB)</strong></td><td>Stores all data — stickers, items, users, profiles, orders, maintenance</td></tr>
+            <tr><td><strong>Supabase Storage</strong></td><td>Stores photos, QR code images, file attachments</td></tr>
+            <tr><td><strong>Supabase Auth</strong></td><td>Handles user authentication (email/password, Google OAuth, Apple OAuth)</td></tr>
+            <tr><td><strong>Railway</strong></td><td>Runs the Python QR generation microservice</td></tr>
+            <tr><td><strong>Square</strong></td><td>Processes payments — browser-to-Square direct, never hits our servers</td></tr>
+            <tr><td><strong>Claude API</strong></td><td>AI assistant for item-specific Q&A (planned)</td></tr>
+            <tr><td><strong>Email Service</strong></td><td>Sends transactional notifications (planned)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        All data in transit is encrypted via HTTPS. The entire platform is cloud-hosted — no servers to maintain.
+      </div>
+    </section>
+
+    <!-- File Types -->
+    <section id="file-types">
+      <p class="section-label">Data</p>
+      <h2>File Types in the <span class="accent">System</span></h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Where It Lives</th><th>What It Is</th></tr></thead>
+          <tbody>
+            <tr><td><code>.png</code> / <code>.jpeg</code></td><td>Supabase Storage</td><td>User-uploaded item photos (compressed client-side)</td></tr>
+            <tr><td><code>.svg</code></td><td>Supabase Storage / local pipeline</td><td>State outline templates, QR code vector files</td></tr>
+            <tr><td><code>.ai</code> / <code>.eps</code></td><td>Local design assets</td><td>Illustrator source files for sticker design</td></tr>
+            <tr><td>JSONB columns</td><td>Supabase DB</td><td>Photo metadata, custom fields on items</td></tr>
+            <tr><td><code>.py</code> scripts</td><td>Railway (Docker)</td><td>QR generation engine</td></tr>
+            <tr><td><code>.tsx</code> / <code>.ts</code></td><td>Vercel (via GitHub)</td><td>Next.js application code</td></tr>
+            <tr><td><code>.html</code></td><td>Hosted / local</td><td>Sticker customizer (obfuscated production build)</td></tr>
+            <tr><td><code>.sql</code></td><td>Supabase migrations</td><td>Database schema and seed data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Database -->
+    <section id="database">
+      <p class="section-label">Data</p>
+      <h2>Database <span class="accent">Tables</span></h2>
+      <h3>Current</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>stickers</code></td><td>QR sticker records — short_code, status, linked item_id, state, city, lat/lng, batch_id</td></tr>
+            <tr><td><code>items</code></td><td>The tracked objects — category, make, model, year, serial_number, photos (JSONB), notes, listing info, owner contact toggles</td></tr>
+            <tr><td><code>profiles</code></td><td>Extends auth.users — display_name, phone, avatar_url</td></tr>
+            <tr><td><code>orders</code></td><td>Purchase records — linked to Square payment</td></tr>
+            <tr><td><code>order_items</code></td><td>Line items within orders</td></tr>
+            <tr><td><code>coupons</code></td><td>Discount/test codes (TESTBETA, BOSSDEMO seeded)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Coming Soon</h3>
+      <p><code>maintenance_records</code>, <code>shops</code>, <code>ownership_history</code>, <code>conversations</code> (AI chat history)</p>
+    </section>
+
+    <!-- Authentication -->
+    <section id="authentication">
+      <p class="section-label">Security</p>
+      <h2>Authentication <span class="accent">Details</span></h2>
+      <p>The auth system uses <strong>Supabase Auth</strong> with three providers:</p>
+      <ul>
+        <li><strong>Email + Password</strong> — standard signup/login</li>
+        <li><strong>Google OAuth</strong> — "Continue with Google"</li>
+        <li><strong>Apple OAuth</strong> — "Continue with Apple" (JWT secret expires every 6 months — next rotation ~August 2026)</li>
+      </ul>
+      <p>Session persistence is handled by Next.js middleware (<code>src/middleware.ts</code>) that creates a Supabase server client on every request and refreshes the session token. The <code>AuthContext</code> (<code>src/contexts/AuthContext.tsx</code>) provides a <code>useAuth()</code> hook for client components.</p>
+      <p>Auth redirects are handled via URL params (e.g., <code>/auth?redirect=/claim/XYZ</code>).</p>
+    </section>
+
+    <!-- RLS -->
+    <section id="rls">
+      <p class="section-label">Security</p>
+      <h2>Row Level <span class="accent">Security</span> (RLS)</h2>
+      <p>Supabase RLS policies are already in place:</p>
+      <ul>
+        <li><strong>Public read</strong> — anyone can view item profiles (that's the whole point of scanning)</li>
+        <li><strong>Owner update</strong> — only the item owner can edit their item details</li>
+        <li><strong>Anyone can claim/insert</strong> — unclaimed stickers can be claimed by any authenticated user</li>
+        <li><strong>Profiles</strong> — users can only edit their own profile</li>
+      </ul>
+    </section>
+
+    <!-- Cybersecurity Task List -->
+    <section id="cybersecurity-tasks">
+      <p class="section-label">Your Domain</p>
+      <h2>Cybersecurity <span class="accent">Task List</span></h2>
+      <p>These are the security-relevant tasks extracted from the project roadmap, organized by priority.</p>
+
+      <!-- Critical -->
+      <div class="priority-section priority-critical">
+        <div class="priority-label">Critical / Immediate</div>
+        <div class="task-card">
+          <h4>RLS Policy Audit & Hardening</h4>
+          <p>The existing RLS policies cover the basics (public read, owner write) but haven't been stress-tested. Audit every table for edge cases — especially around the <code>orders</code>, <code>order_items</code>, and <code>coupons</code> tables that are about to go live. The migration SQL is at <code>qrstkr/supabase/migrations/20260303_orders_and_coupons.sql</code> and needs to be reviewed before it's run.</p>
+        </div>
+        <div class="task-card">
+          <h4>API Route Security Review</h4>
+          <p>The Next.js API routes handle order creation, admin operations, and coupon validation. Review these for:</p>
+          <ul>
+            <li><code>POST /api/orders</code> and <code>GET /api/orders</code> — proper auth checks</li>
+            <li><code>PATCH /api/orders/[orderId]</code> — only admins or the order owner should be able to update</li>
+            <li><code>GET/PATCH /api/admin/orders</code> — admin access is currently checked via email. Needs a proper admin role system.</li>
+            <li><code>POST /api/coupons/validate</code> — rate limiting to prevent brute-force coupon guessing</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <h4>Square Payment Flow Security</h4>
+          <p>Payment goes browser → Square directly (good — PCI compliance is on Square). But verify that the webhook/callback from Square to Supabase is authenticated and can't be spoofed. Order confirmation should be validated server-side, not trusted from the client.</p>
+        </div>
+        <div class="task-card">
+          <h4>Apple OAuth Secret Rotation</h4>
+          <p>Apple JWT secret expires every 6 months. Next rotation is ~August 2026. Set up monitoring/alerting so this doesn't silently break login. Document the rotation procedure.</p>
+        </div>
+      </div>
+
+      <!-- High -->
+      <div class="priority-section priority-high">
+        <div class="priority-label">High Priority</div>
+        <div class="task-card">
+          <h4>Short Code Security</h4>
+          <p>The <code>allocate_short_code</code> database function generates codes for sticker URLs (<code>qrstkr.com/i/XXXXXXXX</code>). Review the character set (ambiguous chars already excluded) and ensure codes aren't sequential or predictable — someone shouldn't be able to enumerate valid sticker URLs.</p>
+        </div>
+        <div class="task-card">
+          <h4>Photo Upload Validation</h4>
+          <p>Client-side compression is done before upload, but there's no server-side validation mentioned. Implement:</p>
+          <ul>
+            <li>File type verification (not just extension — check magic bytes)</li>
+            <li>Max file size enforcement server-side</li>
+            <li>Image dimension limits</li>
+            <li>Malicious file detection (SVG XSS, polyglot files)</li>
+            <li>Supabase Storage bucket permissions review</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <h4>Ownership Transfer Security (Upcoming)</h4>
+          <p>The transfer flow involves generating invite links. When this gets built:</p>
+          <ul>
+            <li>Transfer tokens must be single-use, time-limited, and cryptographically random</li>
+            <li>The old owner must explicitly confirm</li>
+            <li>The new owner's acceptance must be authenticated</li>
+            <li>Ownership history must be immutable (append-only)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <h4>Shop System Authentication (Upcoming)</h4>
+          <p>Repair shops will be able to write maintenance records to items they don't own. This is a significant trust boundary:</p>
+          <ul>
+            <li>Shop verification/approval process before they can submit</li>
+            <li>Rate limiting on shop submissions</li>
+            <li>Owner dispute/delete flow needs audit trail</li>
+            <li>Prevent shops from modifying existing records (append-only)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Medium -->
+      <div class="priority-section priority-medium">
+        <div class="priority-label">Medium Priority</div>
+        <div class="task-card">
+          <h4>Rate Limiting & Abuse Prevention</h4>
+          <ul>
+            <li>QR scan endpoint — prevent scraping of all item profiles</li>
+            <li>Auth endpoints — brute force protection on login</li>
+            <li>Coupon validation — prevent code enumeration</li>
+            <li>API routes — general rate limiting per IP/user</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <h4>Claude API Integration Security (Upcoming)</h4>
+          <p>When the AI assistant is added:</p>
+          <ul>
+            <li>API key management (never exposed client-side)</li>
+            <li>Per-user rate limiting to control costs</li>
+            <li>Input sanitization (prevent prompt injection via item data)</li>
+            <li>Conversation history access control (owner-only)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <h4>Code Obfuscation Review</h4>
+          <p>The sticker customizer uses a Babel → javascript-obfuscator pipeline for production. Review the obfuscation config to ensure no sensitive logic or API keys are leaking through the client-side code.</p>
+        </div>
+        <div class="task-card">
+          <h4>HTTPS & Transport Security</h4>
+          <p>All traffic is HTTPS (good), but verify:</p>
+          <ul>
+            <li>HSTS headers are set on Vercel</li>
+            <li>No mixed content issues</li>
+            <li>Supabase Storage URLs are served over HTTPS</li>
+            <li>Railway service communication is encrypted</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Lower -->
+      <div class="priority-section priority-low">
+        <div class="priority-label">Lower Priority / Ongoing</div>
+        <div class="task-card">
+          <h4>Marketplace Security (Phase 3)</h4>
+          <p>When the marketplace launches: inquiry/messaging system needs XSS prevention, spam filtering, and content moderation. Listing data needs validation to prevent injection.</p>
+        </div>
+        <div class="task-card">
+          <h4>Dealer Portal (Phase 4)</h4>
+          <p>Bulk operations = bigger blast radius. Role-based access control, audit logging, and API key scoping will all be needed.</p>
+        </div>
+        <div class="task-card">
+          <h4>Native Mobile App Security (Phase 4)</h4>
+          <p>Certificate pinning, secure token storage, biometric auth integration.</p>
+        </div>
+        <div class="task-card">
+          <h4>Subscription/Renewal System (Phase 4)</h4>
+          <p>Recurring payment security, grace period handling, sticker deactivation flow.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Decisions -->
+    <section id="architecture-decisions">
+      <p class="section-label">Context</p>
+      <h2>Key Architecture <span class="accent">Decisions</span></h2>
+      <p>Security-relevant design choices baked into the platform.</p>
+      <ul class="arch-decisions">
+        <li><strong>No self-hosted servers.</strong> Everything is managed cloud services (Vercel, Supabase, Railway, Square). This reduces attack surface but means security depends heavily on proper configuration of each service.</li>
+        <li><strong>Supabase is the brain.</strong> Nearly everything connects through it. If Supabase RLS is wrong, the whole thing is wrong.</li>
+        <li><strong>Payment never touches us.</strong> Square handles PCI compliance. We only get confirmation callbacks.</li>
+        <li><strong>The sticker URL is public by design.</strong> <code>qrstkr.com/i/XXXXXXXX</code> is meant to be scannable by anyone. The security boundary is between "viewing" (public) and "editing" (authenticated owner only).</li>
+        <li><strong>Client-side image processing.</strong> Compression happens in the browser before upload. Server-side validation is still needed as a second line of defense.</li>
+      </ul>
+    </section>
+
+    <!-- Repo Structure -->
+    <section id="repo-structure">
+      <p class="section-label">Codebase</p>
+      <h2>Repo & Project <span class="accent">Structure</span></h2>
+<pre><code>qrstkr/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── admin/orders/route.ts    <span class="comment">← Admin print queue</span>
+│   │   │   ├── coupons/validate/route.ts <span class="comment">← Coupon validation</span>
+│   │   │   └── orders/
+│   │   │       ├── route.ts              <span class="comment">← Create/list orders</span>
+│   │   │       └── [orderId]/route.ts    <span class="comment">← Single order ops</span>
+│   │   ├── auth/                         <span class="comment">← Login/signup page</span>
+│   │   ├── claim/                        <span class="comment">← Sticker claim flow</span>
+│   │   ├── i/                            <span class="comment">← Public item pages (scan landing)</span>
+│   │   ├── my-items/                     <span class="comment">← Owner dashboard</span>
+│   │   ├── layout.tsx                    <span class="comment">← Root layout</span>
+│   │   └── page.tsx                      <span class="comment">← Landing page</span>
+│   ├── components/
+│   │   ├── Nav.tsx
+│   │   ├── QRCustomizerMockup.jsx
+│   │   └── QRSTKRLogo.tsx
+│   ├── contexts/
+│   │   └── AuthContext.tsx               <span class="comment">← Auth state management</span>
+│   ├── lib/
+│   │   ├── constants.ts
+│   │   ├── image-utils.ts               <span class="comment">← Client-side image compression</span>
+│   │   ├── supabase.ts                  <span class="comment">← Browser Supabase client</span>
+│   │   ├── supabase-server.ts           <span class="comment">← Server Supabase client</span>
+│   │   └── types.ts                     <span class="comment">← TypeScript types for all tables</span>
+│   └── middleware.ts                     <span class="comment">← Session refresh on every request</span>
+├── supabase/
+│   └── migrations/                       <span class="comment">← SQL migration files</span>
+├── services/
+│   └── qr-generation/                    <span class="comment">← Python QR microservice (Railway)</span>
+└── package.json</code></pre>
+      <p><strong>GitHub:</strong> <code>github.com/bec-archer/qrstkr</code><br>
+      <strong>Production:</strong> <code>qrstkr.com</code> (Vercel)</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      QRSTKR &bull; A Hydraulics SR-80 project &bull; &copy; 2026
+    </footer>
+
+  </div>
+
+  <script>
+  (function() {
+    // Markdown source for each section, keyed by section ID
+    var md = {
+'what-is-qrstkr': `## What is QRSTKR?
+
+QRSTKR is a QR code sticker platform for tracking physical items — trucks, boats, equipment, you name it. Customers buy a custom QR sticker shaped like a US state, stick it on their thing, and that sticker links to a digital profile with specs, photos, maintenance records, and ownership history. When the item gets sold, the ownership transfers but the sticker stays. Repair shops can scan and log service records too.
+
+> **The business loop:** someone sees a sticker → scans it → thinks "that's cool" → buys their own → the flywheel spins.`,
+
+'tech-stack': `## Tech Stack & Architecture
+
+### Frontend
+**Next.js 16** with React 19, TypeScript, and Tailwind CSS. The app uses server-side rendering and API routes built into Next.js — no separate backend server.
+
+### Hosting & Deployment
+**Vercel** — auto-deploys from GitHub (\`github.com/bec-archer/qrstkr\`). Custom domain \`qrstkr.com\` is on **Cloudflare DNS**.
+
+### Database, Auth & Storage
+**Supabase** is the central hub — it handles three things:
+- **PostgreSQL Database** — all application data (stickers, items, users, orders, maintenance records, ownership history)
+- **Supabase Auth** — email/password plus OAuth (Google and Apple). Session management via middleware that refreshes tokens on every request.
+- **Supabase Storage** — photo uploads, QR code images, and file attachments. Client-side compression happens before upload (Canvas API, 1200px max, 80% JPEG quality). Photo metadata is stored as JSONB on the items table.
+
+### QR Code Generation
+**Railway** — a separate Python microservice (containerized via Docker, ~$5/mo) that generates the state-shaped QR codes. Supabase triggers generation when a new order comes in, and the generated QR image is saved back to Supabase Storage.
+
+### Payments
+**Square** — handles all payment processing. Payment info goes directly from the user's browser to Square's servers — it never touches the QRSTKR backend. Square confirms payment → order record created in Supabase.
+
+### AI Assistant (Planned)
+**Claude API (Anthropic)** — will power an AI assistant on item pages that can answer questions about equipment using the item's data and maintenance history as context.
+
+### Email/Notifications
+An email service (TBD) for transfer requests, renewal reminders, and shop submission notifications.`,
+
+'service-nodes': `## Service Nodes
+
+| Node | Role |
+|---|---|
+| **User's Browser** | Customer-facing — browses, scans QR codes, claims items, places orders |
+| **Shop's Browser** | Repair shop interface — scans stickers, submits maintenance records |
+| **Vercel** | Serves the Next.js frontend and API routes |
+| **Supabase (DB)** | Stores all data — stickers, items, users, profiles, orders, maintenance |
+| **Supabase Storage** | Stores photos, QR code images, file attachments |
+| **Supabase Auth** | Handles user authentication (email/password, Google OAuth, Apple OAuth) |
+| **Railway** | Runs the Python QR generation microservice |
+| **Square** | Processes payments — browser-to-Square direct, never hits our servers |
+| **Claude API** | AI assistant for item-specific Q&A (planned) |
+| **Email Service** | Sends transactional notifications (planned) |
+
+All data in transit is encrypted via HTTPS. The entire platform is cloud-hosted — no servers to maintain.`,
+
+'file-types': `## File Types in the System
+
+| Type | Where It Lives | What It Is |
+|---|---|---|
+| \`.png\` / \`.jpeg\` | Supabase Storage | User-uploaded item photos (compressed client-side) |
+| \`.svg\` | Supabase Storage / local pipeline | State outline templates, QR code vector files |
+| \`.ai\` / \`.eps\` | Local design assets | Illustrator source files for sticker design |
+| JSONB columns | Supabase DB | Photo metadata, custom fields on items |
+| \`.py\` scripts | Railway (Docker) | QR generation engine |
+| \`.tsx\` / \`.ts\` | Vercel (via GitHub) | Next.js application code |
+| \`.html\` | Hosted / local | Sticker customizer (obfuscated production build) |
+| \`.sql\` | Supabase migrations | Database schema and seed data |`,
+
+'database': `## Database Tables
+
+### Current
+
+| Table | Purpose |
+|---|---|
+| \`stickers\` | QR sticker records — short_code, status, linked item_id, state, city, lat/lng, batch_id |
+| \`items\` | The tracked objects — category, make, model, year, serial_number, photos (JSONB), notes, listing info, owner contact toggles |
+| \`profiles\` | Extends auth.users — display_name, phone, avatar_url |
+| \`orders\` | Purchase records — linked to Square payment |
+| \`order_items\` | Line items within orders |
+| \`coupons\` | Discount/test codes (TESTBETA, BOSSDEMO seeded) |
+
+### Coming Soon
+\`maintenance_records\`, \`shops\`, \`ownership_history\`, \`conversations\` (AI chat history)`,
+
+'authentication': `## Authentication Details
+
+The auth system uses **Supabase Auth** with three providers:
+- **Email + Password** — standard signup/login
+- **Google OAuth** — "Continue with Google"
+- **Apple OAuth** — "Continue with Apple" (JWT secret expires every 6 months — next rotation ~August 2026)
+
+Session persistence is handled by Next.js middleware (\`src/middleware.ts\`) that creates a Supabase server client on every request and refreshes the session token. The \`AuthContext\` (\`src/contexts/AuthContext.tsx\`) provides a \`useAuth()\` hook for client components.
+
+Auth redirects are handled via URL params (e.g., \`/auth?redirect=/claim/XYZ\`).`,
+
+'rls': `## Row Level Security (RLS)
+
+Supabase RLS policies are already in place:
+- **Public read** — anyone can view item profiles (that's the whole point of scanning)
+- **Owner update** — only the item owner can edit their item details
+- **Anyone can claim/insert** — unclaimed stickers can be claimed by any authenticated user
+- **Profiles** — users can only edit their own profile`,
+
+'cybersecurity-tasks': `## Your Cybersecurity Task List
+
+### Critical / Immediate
+
+**RLS Policy Audit & Hardening**
+The existing RLS policies cover the basics (public read, owner write) but haven't been stress-tested. Audit every table for edge cases — especially around the \`orders\`, \`order_items\`, and \`coupons\` tables that are about to go live. The migration SQL is at \`qrstkr/supabase/migrations/20260303_orders_and_coupons.sql\` and needs to be reviewed before it's run.
+
+**API Route Security Review**
+The Next.js API routes handle order creation, admin operations, and coupon validation. Review these for:
+- \`POST /api/orders\` and \`GET /api/orders\` — proper auth checks
+- \`PATCH /api/orders/[orderId]\` — only admins or the order owner should be able to update
+- \`GET/PATCH /api/admin/orders\` — admin access is currently checked via email. Needs a proper admin role system.
+- \`POST /api/coupons/validate\` — rate limiting to prevent brute-force coupon guessing
+
+**Square Payment Flow Security**
+Payment goes browser → Square directly (good — PCI compliance is on Square). But verify that the webhook/callback from Square to Supabase is authenticated and can't be spoofed. Order confirmation should be validated server-side, not trusted from the client.
+
+**Apple OAuth Secret Rotation**
+Apple JWT secret expires every 6 months. Next rotation is ~August 2026. Set up monitoring/alerting so this doesn't silently break login. Document the rotation procedure.
+
+### High Priority
+
+**Short Code Security**
+The \`allocate_short_code\` database function generates codes for sticker URLs (\`qrstkr.com/i/XXXXXXXX\`). Review the character set (ambiguous chars already excluded) and ensure codes aren't sequential or predictable — someone shouldn't be able to enumerate valid sticker URLs.
+
+**Photo Upload Validation**
+Client-side compression is done before upload, but there's no server-side validation mentioned. Implement:
+- File type verification (not just extension — check magic bytes)
+- Max file size enforcement server-side
+- Image dimension limits
+- Malicious file detection (SVG XSS, polyglot files)
+- Supabase Storage bucket permissions review
+
+**Ownership Transfer Security (Upcoming)**
+The transfer flow involves generating invite links. When this gets built:
+- Transfer tokens must be single-use, time-limited, and cryptographically random
+- The old owner must explicitly confirm
+- The new owner's acceptance must be authenticated
+- Ownership history must be immutable (append-only)
+
+**Shop System Authentication (Upcoming)**
+Repair shops will be able to write maintenance records to items they don't own. This is a significant trust boundary:
+- Shop verification/approval process before they can submit
+- Rate limiting on shop submissions
+- Owner dispute/delete flow needs audit trail
+- Prevent shops from modifying existing records (append-only)
+
+### Medium Priority
+
+**Rate Limiting & Abuse Prevention**
+- QR scan endpoint — prevent scraping of all item profiles
+- Auth endpoints — brute force protection on login
+- Coupon validation — prevent code enumeration
+- API routes — general rate limiting per IP/user
+
+**Claude API Integration Security (Upcoming)**
+When the AI assistant is added:
+- API key management (never exposed client-side)
+- Per-user rate limiting to control costs
+- Input sanitization (prevent prompt injection via item data)
+- Conversation history access control (owner-only)
+
+**Code Obfuscation Review**
+The sticker customizer uses a Babel → javascript-obfuscator pipeline for production. Review the obfuscation config to ensure no sensitive logic or API keys are leaking through the client-side code.
+
+**HTTPS & Transport Security**
+All traffic is HTTPS (good), but verify:
+- HSTS headers are set on Vercel
+- No mixed content issues
+- Supabase Storage URLs are served over HTTPS
+- Railway service communication is encrypted
+
+### Lower Priority / Ongoing
+
+**Marketplace Security (Phase 3)** — inquiry/messaging system needs XSS prevention, spam filtering, and content moderation.
+
+**Dealer Portal (Phase 4)** — Bulk operations = bigger blast radius. RBAC, audit logging, and API key scoping.
+
+**Native Mobile App Security (Phase 4)** — Certificate pinning, secure token storage, biometric auth.
+
+**Subscription/Renewal System (Phase 4)** — Recurring payment security, grace period handling, sticker deactivation flow.`,
+
+'architecture-decisions': `## Key Architecture Decisions (Security-Relevant)
+
+- **No self-hosted servers.** Everything is managed cloud services (Vercel, Supabase, Railway, Square). This reduces attack surface but means security depends heavily on proper configuration of each service.
+- **Supabase is the brain.** Nearly everything connects through it. If Supabase RLS is wrong, the whole thing is wrong.
+- **Payment never touches us.** Square handles PCI compliance. We only get confirmation callbacks.
+- **The sticker URL is public by design.** \`qrstkr.com/i/XXXXXXXX\` is meant to be scannable by anyone. The security boundary is between "viewing" (public) and "editing" (authenticated owner only).
+- **Client-side image processing.** Compression happens in the browser before upload. Server-side validation is still needed as a second line of defense.`,
+
+'repo-structure': "## Repo & Project Structure\n\n```\nqrstkr/\n\u251C\u2500\u2500 src/\n\u2502   \u251C\u2500\u2500 app/\n\u2502   \u2502   \u251C\u2500\u2500 api/\n\u2502   \u2502   \u2502   \u251C\u2500\u2500 admin/orders/route.ts    \u2190 Admin print queue\n\u2502   \u2502   \u2502   \u251C\u2500\u2500 coupons/validate/route.ts \u2190 Coupon validation\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 orders/\n\u2502   \u2502   \u2502       \u251C\u2500\u2500 route.ts              \u2190 Create/list orders\n\u2502   \u2502   \u2502       \u2514\u2500\u2500 [orderId]/route.ts    \u2190 Single order ops\n\u2502   \u2502   \u251C\u2500\u2500 auth/                         \u2190 Login/signup page\n\u2502   \u2502   \u251C\u2500\u2500 claim/                        \u2190 Sticker claim flow\n\u2502   \u2502   \u251C\u2500\u2500 i/                            \u2190 Public item pages (scan landing)\n\u2502   \u2502   \u251C\u2500\u2500 my-items/                     \u2190 Owner dashboard\n\u2502   \u2502   \u251C\u2500\u2500 layout.tsx                    \u2190 Root layout\n\u2502   \u2502   \u2514\u2500\u2500 page.tsx                      \u2190 Landing page\n\u2502   \u251C\u2500\u2500 components/\n\u2502   \u2502   \u251C\u2500\u2500 Nav.tsx\n\u2502   \u2502   \u251C\u2500\u2500 QRCustomizerMockup.jsx\n\u2502   \u2502   \u2514\u2500\u2500 QRSTKRLogo.tsx\n\u2502   \u251C\u2500\u2500 contexts/\n\u2502   \u2502   \u2514\u2500\u2500 AuthContext.tsx               \u2190 Auth state management\n\u2502   \u251C\u2500\u2500 lib/\n\u2502   \u2502   \u251C\u2500\u2500 constants.ts\n\u2502   \u2502   \u251C\u2500\u2500 image-utils.ts               \u2190 Client-side image compression\n\u2502   \u2502   \u251C\u2500\u2500 supabase.ts                  \u2190 Browser Supabase client\n\u2502   \u2502   \u251C\u2500\u2500 supabase-server.ts           \u2190 Server Supabase client\n\u2502   \u2502   \u2514\u2500\u2500 types.ts                     \u2190 TypeScript types for all tables\n\u2502   \u2514\u2500\u2500 middleware.ts                     \u2190 Session refresh on every request\n\u251C\u2500\u2500 supabase/\n\u2502   \u2514\u2500\u2500 migrations/                       \u2190 SQL migration files\n\u251C\u2500\u2500 services/\n\u2502   \u2514\u2500\u2500 qr-generation/                    \u2190 Python QR microservice (Railway)\n\u2514\u2500\u2500 package.json\n```\n\n**GitHub:** `github.com/bec-archer/qrstkr`\n**Production:** `qrstkr.com` (Vercel)"
+    };
+
+    // For each section with markdown, inject the toggle button and overlay
+    Object.keys(md).forEach(function(id) {
+      var section = document.getElementById(id);
+      if (!section) return;
+
+      // Find the h2 and wrap it with a row that includes the MD button
+      var h2 = section.querySelector('h2');
+      if (!h2) return;
+
+      // Create wrapper row
+      var row = document.createElement('div');
+      row.className = 'section-header-row';
+
+      // Move section-label into row if it exists
+      var label = h2.previousElementSibling;
+      if (label && label.classList.contains('section-label')) {
+        row.appendChild(label);
+      }
+      h2.parentNode.insertBefore(row, h2);
+      row.appendChild(h2);
+
+      // Create MD toggle button
+      var btn = document.createElement('button');
+      btn.className = 'md-toggle';
+      btn.textContent = 'MD';
+      btn.setAttribute('aria-label', 'Toggle markdown view');
+      btn.setAttribute('title', 'View as copyable Markdown');
+      row.appendChild(btn);
+
+      // Create overlay
+      var overlay = document.createElement('div');
+      overlay.className = 'md-overlay';
+      overlay.innerHTML = '<button class="copy-btn">Copy</button><pre><code></code></pre>';
+      overlay.querySelector('code').textContent = md[id];
+      row.parentNode.insertBefore(overlay, row.nextSibling);
+
+      // Wrap remaining section content (everything after overlay) in a div
+      var contentWrapper = document.createElement('div');
+      contentWrapper.className = 'section-content';
+      var sibling = overlay.nextSibling;
+      while (sibling && sibling !== section.nextSibling) {
+        var next = sibling.nextSibling;
+        // Stop if we hit the closing of the section
+        if (sibling.nodeType === 1 && sibling.tagName === 'SECTION') break;
+        contentWrapper.appendChild(sibling);
+        sibling = next;
+      }
+      section.appendChild(contentWrapper);
+
+      // Toggle logic
+      btn.addEventListener('click', function() {
+        var isActive = btn.classList.toggle('active');
+        if (isActive) {
+          overlay.classList.add('visible');
+          contentWrapper.classList.add('hidden');
+          btn.textContent = 'HTML';
+        } else {
+          overlay.classList.remove('visible');
+          contentWrapper.classList.remove('hidden');
+          btn.textContent = 'MD';
+        }
+      });
+
+      // Copy logic
+      overlay.querySelector('.copy-btn').addEventListener('click', function() {
+        var copyBtn = this;
+        navigator.clipboard.writeText(md[id]).then(function() {
+          copyBtn.textContent = 'Copied!';
+          copyBtn.classList.add('copied');
+          setTimeout(function() {
+            copyBtn.textContent = 'Copy';
+            copyBtn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
