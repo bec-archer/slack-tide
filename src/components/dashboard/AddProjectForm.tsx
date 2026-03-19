@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import type { Project } from '@/lib/dashboard-types'
 
 interface AddProjectFormProps {
   onAdded: () => void
@@ -14,7 +15,20 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [color, setColor] = useState(COLORS[0])
+  const [parentProjectId, setParentProjectId] = useState<string>('')
+  const [topLevelProjects, setTopLevelProjects] = useState<Project[]>([])
   const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (!open) return
+    const supabase = createQrstkrClient()
+    supabase
+      .from('projects')
+      .select('id, name')
+      .is('parent_project_id', null)
+      .order('name')
+      .then(({ data }) => setTopLevelProjects((data as Project[]) || []))
+  }, [open])
 
   function generateSlug(text: string) {
     return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -31,10 +45,12 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
       description: description.trim() || null,
       color,
       status: 'active',
+      parent_project_id: parentProjectId || null,
     })
     setName('')
     setDescription('')
     setColor(COLORS[0])
+    setParentProjectId('')
     setSaving(false)
     setOpen(false)
     onAdded()
@@ -63,6 +79,16 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
         placeholder="Description (optional)"
         className="input !py-2 !px-3 !text-sm mb-3"
       />
+      <select
+        value={parentProjectId}
+        onChange={(e) => setParentProjectId(e.target.value)}
+        className="input !py-2 !px-3 !text-sm mb-3"
+      >
+        <option value="">Parent project (optional)</option>
+        {topLevelProjects.map((p) => (
+          <option key={p.id} value={p.id}>{p.name}</option>
+        ))}
+      </select>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xs text-text-tertiary">Color:</span>
         {COLORS.map((c) => (
