@@ -25,8 +25,8 @@ async function pingService(name: string, fn: () => Promise<Response>): Promise<S
 export async function GET() {
   const serverStart = performance.now()
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const supabaseUrl = process.env.NEXT_PUBLIC_QRSTKR_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_QRSTKR_SUPABASE_ANON_KEY
 
   const results = await Promise.allSettled([
     pingService('Supabase', () =>
@@ -52,7 +52,7 @@ export async function GET() {
   // Add API server self-measurement
   const serverLatency = Math.round(performance.now() - serverStart)
   services.push({
-    name: 'API Server',
+    name: 'Dev Server',
     status: 'ok',
     latency: serverLatency,
     lastChecked: new Date().toISOString(),

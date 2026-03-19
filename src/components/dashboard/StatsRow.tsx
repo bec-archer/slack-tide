@@ -98,7 +98,7 @@ export default function StatsRow({ features, createdAt, accentColor, pulseKey, a
     { label: 'In Progress', value: inProgressAnimated, icon: '🔧' },
     { label: 'Scope Creep', value: scopeCreepAnimated, icon: '🔀' },
     { label: 'Days Active', value: uptime, icon: '📅', isString: true },
-    { label: 'API Latency', value: apiLatency != null ? `${apiLatency}ms` : '—', icon: '⚡', isString: true, valueColor: latencyColor },
+    { label: 'Supabase', value: apiLatency != null ? `${apiLatency}ms` : '—', icon: '🗄️', isString: true, valueColor: latencyColor },
   ]
 
   return (

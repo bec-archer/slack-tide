@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Dashboard — QRSTKR',
+  title: 'Dashboard — Slack Tide',
   description: 'Project dashboard and feature tracking',
 }
 
