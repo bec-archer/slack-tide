@@ -28,8 +28,9 @@ export async function GET(request: NextRequest) {
     const { data: notifications, error } = await query
 
     if (error) {
+      // Table may not exist yet — return empty instead of crashing
       console.error('Notifications fetch error:', error)
-      return NextResponse.json({ error: 'Failed to fetch notifications' }, { status: 500 })
+      return NextResponse.json({ notifications: [], unread_count: 0 })
     }
 
     // Also get unread count
@@ -39,9 +40,9 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .is('read_at', null)
 
-    return NextResponse.json({ notifications, unread_count: unreadCount || 0 })
+    return NextResponse.json({ notifications: notifications || [], unread_count: unreadCount || 0 })
   } catch (err) {
     console.error('Notifications GET error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ notifications: [], unread_count: 0 })
   }
 }

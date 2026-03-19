@@ -25,25 +25,29 @@ export async function getShopContext(
   userId: string,
   shopId?: string
 ): Promise<ShopContext | null> {
-  let query = supabase
-    .from('shop_employees')
-    .select('id, shop_id, user_id, role')
-    .eq('user_id', userId)
-    .is('removed_at', null)
+  try {
+    let query = supabase
+      .from('shop_employees')
+      .select('id, shop_id, user_id, role')
+      .eq('user_id', userId)
+      .is('removed_at', null)
 
-  if (shopId) {
-    query = query.eq('shop_id', shopId)
-  }
+    if (shopId) {
+      query = query.eq('shop_id', shopId)
+    }
 
-  const { data, error } = await query.limit(1).single()
+    const { data, error } = await query.limit(1).single()
 
-  if (error || !data) return null
+    if (error || !data) return null
 
-  return {
-    shop_id: data.shop_id,
-    user_id: data.user_id,
-    role: data.role as ShopEmployeeRole,
-    employee_id: data.id,
+    return {
+      shop_id: data.shop_id,
+      user_id: data.user_id,
+      role: data.role as ShopEmployeeRole,
+      employee_id: data.id,
+    }
+  } catch {
+    return null
   }
 }
 

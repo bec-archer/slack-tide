@@ -29,10 +29,12 @@ function useCountUp(target: number, duration = 800) {
   return value
 }
 
-function useLiveUptime(createdAt: string) {
+function useLiveUptime(createdAt: string | null | undefined) {
   const compute = useCallback(() => {
+    if (!createdAt) return '—'
     const ms = Date.now() - new Date(createdAt).getTime()
-    const totalHours = Math.max(0, Math.floor(ms / 3600000))
+    if (isNaN(ms) || ms < 0) return '—'
+    const totalHours = Math.floor(ms / 3600000)
     const days = Math.floor(totalHours / 24)
     const hours = totalHours % 24
     return `${days}d ${hours}h`
@@ -50,7 +52,7 @@ function useLiveUptime(createdAt: string) {
 
 interface StatsRowProps {
   features: Feature[]
-  createdAt: string
+  createdAt: string | null | undefined
   accentColor?: string
   pulseKey?: number
   apiLatency?: number | null

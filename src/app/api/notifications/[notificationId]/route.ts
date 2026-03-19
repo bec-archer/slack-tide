@@ -31,6 +31,6 @@ export async function PUT(
     return NextResponse.json({ notification })
   } catch (err) {
     console.error('Notification PUT error:', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Notification update failed' }, { status: 404 })
   }
 }

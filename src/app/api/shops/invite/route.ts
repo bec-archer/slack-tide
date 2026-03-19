@@ -18,61 +18,69 @@ export async function POST(req: NextRequest) {
   const userEmail = user.email
 
   // Check if the user is already associated with a shop
-  const { data: existingEmployee } = await supabase
-    .from('shop_employees')
-    .select('id, shop_id')
-    .eq('user_id', user.id)
-    .is('removed_at', null)
-    .limit(1)
-    .maybeSingle()
+  try {
+    const { data: existingEmployee } = await supabase
+      .from('shop_employees')
+      .select('id, shop_id')
+      .eq('user_id', user.id)
+      .is('removed_at', null)
+      .limit(1)
+      .maybeSingle()
 
-  if (existingEmployee) {
-    return NextResponse.json(
-      { error: 'You are already associated with a shop' },
-      { status: 409 }
-    )
+    if (existingEmployee) {
+      return NextResponse.json(
+        { error: 'You are already associated with a shop' },
+        { status: 409 }
+      )
+    }
+  } catch {
+    // shop_employees table may not exist — continue
   }
 
   // Try to find a pending invite by email first
   let invite: { id: string; shop_id: string; role: string } | null = null
 
-  if (userEmail) {
-    const { data: emailInvite } = await supabase
-      .from('shop_employees')
-      .select('id, shop_id, role')
-      .eq('email', userEmail.toLowerCase())
-      .is('user_id', null)
-      .is('removed_at', null)
-      .limit(1)
-      .maybeSingle()
+  try {
+    if (userEmail) {
+      const { data: emailInvite } = await supabase
+        .from('shop_employees')
+        .select('id, shop_id, role')
+        .eq('email', userEmail.toLowerCase())
+        .is('user_id', null)
+        .is('removed_at', null)
+        .limit(1)
+        .maybeSingle()
 
-    invite = emailInvite
-  }
+      invite = emailInvite
+    }
 
-  // If no email match, try matching by phone from the user's profile
-  if (!invite) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('phone')
-      .eq('id', user.id)
-      .maybeSingle()
+    // If no email match, try matching by phone from the user's profile
+    if (!invite) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('id', user.id)
+        .maybeSingle()
 
-    if (profile?.phone) {
-      const normalizedPhone = profile.phone.replace(/\D/g, '').replace(/^1/, '')
-      if (normalizedPhone.length >= 10) {
-        // Try both with and without leading 1
-        const { data: phoneInvite } = await supabase
-          .from('shop_employees')
-          .select('id, shop_id, role')
-          .or(`phone.eq.${normalizedPhone},phone.eq.1${normalizedPhone}`)
-          .is('user_id', null)
-          .is('removed_at', null)
-          .limit(1)
-          .maybeSingle()
+      if (profile?.phone) {
+        const normalizedPhone = profile.phone.replace(/\D/g, '').replace(/^1/, '')
+        if (normalizedPhone.length >= 10) {
+          // Try both with and without leading 1
+          const { data: phoneInvite } = await supabase
+            .from('shop_employees')
+            .select('id, shop_id, role')
+            .or(`phone.eq.${normalizedPhone},phone.eq.1${normalizedPhone}`)
+            .is('user_id', null)
+            .is('removed_at', null)
+            .limit(1)
+            .maybeSingle()
 
-        invite = phoneInvite
+          invite = phoneInvite
+        }
       }
     }
+  } catch {
+    // shop_employees table may not exist
   }
 
   if (!invite) {

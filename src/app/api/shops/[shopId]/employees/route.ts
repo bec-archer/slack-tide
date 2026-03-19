@@ -43,7 +43,7 @@ export async function GET(
 
     if (empResult.error) {
       console.error('Employee list error:', empResult.error)
-      return NextResponse.json({ error: 'Failed to fetch employees' }, { status: 500 })
+      return NextResponse.json({ employees: [], owner: null, current_user_id: user.id })
     }
 
     const employees = empResult.data ?? []

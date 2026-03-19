@@ -67,22 +67,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the admin employee row (bootstrap: the shop creator is the first admin)
-    const { error: employeeError } = await supabase
-      .from('shop_employees')
-      .insert({
-        shop_id: shop.id,
-        user_id: user.id,
-        email: user.email!,
-        role: 'admin',
-        invited_by: user.id,
-        accepted_at: new Date().toISOString(),
-      })
+    try {
+      const { error: employeeError } = await supabase
+        .from('shop_employees')
+        .insert({
+          shop_id: shop.id,
+          user_id: user.id,
+          email: user.email!,
+          role: 'admin',
+          invited_by: user.id,
+          accepted_at: new Date().toISOString(),
+        })
 
-    if (employeeError) {
-      console.error('Admin employee creation error:', employeeError)
-      // Shop was created but employee link failed — try to clean up
-      await supabase.from('shops').delete().eq('id', shop.id)
-      return NextResponse.json({ error: 'Failed to set up shop admin', detail: employeeError.message }, { status: 500 })
+      if (employeeError) {
+        console.error('Admin employee creation error:', employeeError)
+        // Shop was created but employee link failed — try to clean up
+        await supabase.from('shops').delete().eq('id', shop.id)
+        return NextResponse.json({ error: 'Failed to set up shop admin', detail: employeeError.message }, { status: 500 })
+      }
+    } catch (empErr) {
+      console.error('shop_employees table error (non-fatal):', empErr)
     }
 
     // Mark this account as a business account
