@@ -81,7 +81,7 @@ export default function DashboardPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects
-            .filter((p) => !p.parent_project_id)
+            .filter((p) => p.parent_project_id == null)
             .map((parent) => {
               const children = projects.filter((p) => p.parent_project_id === parent.id)
               const parentFeatures = features.filter(

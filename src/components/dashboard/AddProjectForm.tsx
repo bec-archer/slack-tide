@@ -38,15 +38,24 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
     e.preventDefault()
     if (!name.trim()) return
     setSaving(true)
-    const supabase = createQrstkrClient()
-    await supabase.from('projects').insert({
-      name: name.trim(),
-      slug: generateSlug(name),
-      description: description.trim() || null,
-      color,
-      status: 'active',
-      parent_project_id: parentProjectId || null,
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name.trim(),
+        slug: generateSlug(name),
+        description: description.trim() || null,
+        color,
+        status: 'active',
+        parent_project_id: parentProjectId || null,
+      }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      console.error('Failed to create project:', err)
+      setSaving(false)
+      return
+    }
     setName('')
     setDescription('')
     setColor(COLORS[0])
