@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createQrstkrClient } from '@/lib/supabase-qrstkr'
+import { createBrowserClient } from '@/lib/supabase'
 import type { Project } from '@/lib/dashboard-types'
 
 interface AddProjectFormProps {
@@ -18,10 +18,11 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
   const [parentProjectId, setParentProjectId] = useState<string>('')
   const [topLevelProjects, setTopLevelProjects] = useState<Project[]>([])
   const [saving, setSaving] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!open) return
-    const supabase = createQrstkrClient()
+    const supabase = createBrowserClient()
     supabase
       .from('projects')
       .select('id, name')
@@ -38,21 +39,29 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
     e.preventDefault()
     if (!name.trim()) return
     setSaving(true)
-    const res = await fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: name.trim(),
-        slug: generateSlug(name),
-        description: description.trim() || null,
-        color,
-        status: 'active',
-        parent_project_id: parentProjectId || null,
-      }),
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      console.error('Failed to create project:', err)
+    setFormError(null)
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          slug: generateSlug(name),
+          description: description.trim() || null,
+          color,
+          status: 'active',
+          parent_project_id: parentProjectId || null,
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Unknown error' }))
+        const detail = [err.error, err.hint, err.code].filter(Boolean).join(' — ')
+        setFormError(detail || 'Failed to create project')
+        setSaving(false)
+        return
+      }
+    } catch {
+      setFormError('Network error — could not reach server')
       setSaving(false)
       return
     }
@@ -114,6 +123,9 @@ export default function AddProjectForm({ onAdded }: AddProjectFormProps) {
           />
         ))}
       </div>
+      {formError && (
+        <p className="text-xs text-red-400 mb-2">{formError}</p>
+      )}
       <div className="flex items-center gap-2">
         <button type="button" onClick={() => setOpen(false)} className="text-sm text-text-tertiary hover:text-text-secondary transition-colors">
           Cancel
