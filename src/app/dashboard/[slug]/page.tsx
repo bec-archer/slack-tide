@@ -11,6 +11,7 @@ import StatsRow from '@/components/dashboard/StatsRow'
 import StatusBar from '@/components/dashboard/StatusBar'
 import BurnUpChart from '@/components/dashboard/BurnUpChart'
 import MilestoneCard from '@/components/dashboard/MilestoneCard'
+import FeatureRow from '@/components/dashboard/FeatureRow'
 import ScopeLogTimeline from '@/components/dashboard/ScopeLogTimeline'
 import AddMilestoneForm from '@/components/dashboard/AddMilestoneForm'
 import GitCommitFeed from '@/components/dashboard/GitCommitFeed'
@@ -51,8 +52,8 @@ export default function ProjectDashboardPage() {
     setProject(projectData)
 
     const [milestonesRes, featuresRes, scopeLogRes] = await Promise.all([
-      supabase.from('milestones').select('*').eq('project_id', projectData.id).order('sort_order'),
-      supabase.from('features').select('*').eq('project_id', projectData.id).order('sort_order'),
+      supabase.from('milestones').select('*').eq('project_id', projectData.id).order('sort_order').limit(200),
+      supabase.from('features').select('*').eq('project_id', projectData.id).order('sort_order').limit(500),
       supabase
         .from('scope_log')
         .select('*')
@@ -130,6 +131,8 @@ export default function ProjectDashboardPage() {
   }
 
   const sortedMilestones = [...milestones].sort((a, b) => a.sort_order - b.sort_order)
+  const milestoneIds = new Set(milestones.map((m) => m.id))
+  const unassignedFeatures = features.filter((f) => !f.milestone_id || !milestoneIds.has(f.milestone_id))
 
   return (
     <div>
@@ -184,6 +187,24 @@ export default function ProjectDashboardPage() {
                   sortOrder={milestones.length}
                   onAdded={fetchData}
                 />
+              )}
+              {unassignedFeatures.length > 0 && (
+                <div className="card-static !p-0 overflow-hidden mt-4">
+                  <div className="p-5 pb-3">
+                    <h3 className="text-lg font-semibold text-text-secondary">Unassigned</h3>
+                    <p className="text-xs text-text-tertiary mt-0.5">{unassignedFeatures.length} features not in a milestone</p>
+                  </div>
+                  <div className="border-t border-border-subtle px-3 py-2">
+                    {unassignedFeatures.map((feature) => (
+                      <FeatureRow
+                        key={feature.id}
+                        feature={feature}
+                        isAdmin={isAdmin}
+                        onRefresh={fetchData}
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </section>

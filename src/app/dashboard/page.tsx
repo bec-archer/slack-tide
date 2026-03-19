@@ -23,8 +23,8 @@ export default function DashboardPage() {
     const supabase = createQrstkrClient()
     const [projectsRes, featuresRes, milestonesRes] = await Promise.all([
       supabase.from('projects').select('*').order('created_at', { ascending: false }),
-      supabase.from('features').select('id, project_id, status'),
-      supabase.from('milestones').select('id, project_id'),
+      supabase.from('features').select('id, project_id, status').limit(500),
+      supabase.from('milestones').select('id, project_id').limit(200),
     ])
     if (projectsRes.error) {
       setError('Failed to load projects')
