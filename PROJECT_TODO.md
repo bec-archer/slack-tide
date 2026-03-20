@@ -1,5 +1,5 @@
 ---
-project: slack-tide
+project: slack-tide 
 last_synced: 2026-03-20
 ---
 
