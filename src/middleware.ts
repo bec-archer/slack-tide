@@ -34,9 +34,14 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // Timeout getUser() after 5s — if Supabase auth hangs, fail safe to /auth
+  const userResult = await Promise.race([
+    supabase.auth.getUser(),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
+  ])
+  const user = userResult && 'data' in userResult ? userResult.data.user : null
 
-  // Not logged in → redirect to auth
+  // Not logged in (or auth timed out) → redirect to auth
   if (!user) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth'
