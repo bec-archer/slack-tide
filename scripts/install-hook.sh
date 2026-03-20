@@ -6,8 +6,8 @@
 #   ./scripts/install-hook.sh /path/to/your/project
 #   ./scripts/install-hook.sh          (defaults to current directory)
 #
-# The installed hook only fires when SPEC.md or PROJECT_TODO.md are part of
-# the commit, so normal commits aren't slowed down at all.
+# The installed hook only fires when a file listed in .slack-tide.json
+# (spec_files / todo_file) is part of the commit, so normal commits are untouched.
 
 set -e
 
@@ -50,13 +50,28 @@ fi
 HOOK_BLOCK=$(cat << HOOKEOF
 
 # ── slack-tide sync ───────────────────────────────────────────────────────────
-# Auto-syncs SPEC.md / PROJECT_TODO.md to dashboard on commit.
+# Auto-syncs project docs to dashboard on commit.
 # Installed by: $SLACK_TIDE_REPO/scripts/install-hook.sh
 _SLACK_TIDE_REPO="\${SLACK_TIDE_REPO:-$SLACK_TIDE_REPO}"
 
 if [ -f ".slack-tide.json" ] && [ -f "\$_SLACK_TIDE_REPO/scripts/sync-project.mjs" ]; then
   _CHANGED=\$(git diff-tree --no-commit-id -r --name-only HEAD 2>/dev/null)
-  if echo "\$_CHANGED" | grep -qE '(SPEC\.md|PROJECT_TODO\.md)'; then
+  # Read watched filenames from .slack-tide.json so any spec/todo name works
+  _WATCHED=\$(node -e "
+    try {
+      const c = JSON.parse(require('fs').readFileSync('.slack-tide.json','utf8'));
+      const files = [...(c.spec_files||['SPEC.md']), c.todo_file||'PROJECT_TODO.md'];
+      console.log(files.join('\n'));
+    } catch(e) { console.log('SPEC.md\nPROJECT_TODO.md'); }
+  " 2>/dev/null)
+  _MATCH=false
+  while IFS= read -r _FILE; do
+    if echo "\$_CHANGED" | grep -qF "\$_FILE"; then
+      _MATCH=true
+      break
+    fi
+  done <<< "\$_WATCHED"
+  if [ "\$_MATCH" = "true" ]; then
     _PROJECT_PATH="\$(pwd)"
     (cd "\$_SLACK_TIDE_REPO" && node scripts/sync-project.mjs "\$_PROJECT_PATH" > /tmp/slack-tide-sync.log 2>&1) &
     echo "⏳ slack-tide: syncing to dashboard... (tail /tmp/slack-tide-sync.log)"
