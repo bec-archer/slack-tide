@@ -59,7 +59,7 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
 
   return (
     <div
-      className="card-static !p-0 overflow-hidden group/milestone"
+      className="card-static !p-0 group/milestone"
       style={
         progress >= 100
           ? { background: `linear-gradient(135deg, ${projectColor}08, transparent 60%), linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)` }
