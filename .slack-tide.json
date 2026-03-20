@@ -1,0 +1,5 @@
+{
+  "project_slug": "slack-tide",
+  "spec_files": ["SPEC.md"],
+  "todo_file": "PROJECT_TODO.md"
+}
