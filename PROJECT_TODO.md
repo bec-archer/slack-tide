@@ -1,6 +1,6 @@
 ---
 project: slack-tide
-last_synced: 2026-03-19
+last_synced: 2026-03-20
 ---
 
 ## M1 - Foundation
@@ -15,4 +15,4 @@ last_synced: 2026-03-19
 
 - ✅ Sync script
 - 🔧 Sub-project support
-- ⬜ Git hook
+- ✅ Git hook
