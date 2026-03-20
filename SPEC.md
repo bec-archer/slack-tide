@@ -27,6 +27,11 @@
 - [ ] Sub-project support — parent/child project nesting
 - [x] Git hook — auto-sync on commit
 
+## Scope Creep
+
+- [x] Collapsible project cards — auto-collapse at 100%, manual toggle
+- [x] Sort completed projects to bottom of dashboard
+
 ## Out of Scope
 
 - Mobile app
