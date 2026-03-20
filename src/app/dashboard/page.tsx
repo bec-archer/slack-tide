@@ -92,6 +92,17 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects
             .filter((p) => p.parent_project_id == null)
+            .sort((a, b) => {
+              const progress = (projectId: string) => {
+                const f = features.filter((f) => f.project_id === projectId && f.status !== 'cut')
+                if (f.length === 0) return 0
+                return Math.round(f.filter((f) => f.status === 'done' || f.status === 'shipped').length / f.length * 100)
+              }
+              const pa = progress(a.id), pb = progress(b.id)
+              if (pa === 100 && pb !== 100) return 1
+              if (pa !== 100 && pb === 100) return -1
+              return 0
+            })
             .map((parent) => {
               const children = projects.filter((p) => p.parent_project_id === parent.id)
               const parentFeatures = features.filter(
