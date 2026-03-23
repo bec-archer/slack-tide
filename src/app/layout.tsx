@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ShopProvider } from "@/contexts/ShopContext";
-import Nav from "@/components/Nav";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -43,12 +40,7 @@ export default function RootLayout({
             "var(--font-plus-jakarta), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
         }}
       >
-        <AuthProvider>
-          <ShopProvider>
-            <Nav />
-            {children}
-          </ShopProvider>
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );
