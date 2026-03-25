@@ -1,7 +1,8 @@
-import { NextRequest } from 'next/server'
+export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest) {
-  const repo = request.nextUrl.searchParams.get('repo')
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const repo = searchParams.get('repo')
 
   if (!repo) {
     return Response.json({ error: 'Missing ?repo= parameter' }, { status: 400 })
@@ -15,7 +16,6 @@ export async function GET(request: NextRequest) {
         Authorization: `Bearer ${token}`,
         Accept: 'application/vnd.github+json',
       },
-      next: { revalidate: 60 },
     }
   )
 
