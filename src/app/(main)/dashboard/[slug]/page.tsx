@@ -222,7 +222,7 @@ export default function ProjectDashboardPage() {
         {/* Right column — sticky commit feed + infra health */}
         <div className="sticky top-6 hidden lg:flex flex-col gap-4">
           <InfraHealth accentColor={project.color} onLatencyUpdate={setApiLatency} />
-          <GitCommitFeed accentColor={project.color} pulseKey={pulseKey} />
+          <GitCommitFeed accentColor={project.color} pulseKey={pulseKey} githubRepo={project.github_repo} />
         </div>
       </div>
     </div>

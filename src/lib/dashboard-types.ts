@@ -12,6 +12,7 @@ export interface Project {
   color: string
   status: ProjectStatus
   parent_project_id?: string | null
+  github_repo?: string | null
   created_at: string
   updated_at: string
 }

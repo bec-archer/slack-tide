@@ -58,9 +58,10 @@ function CommitSparkline({ commits, accentColor }: { commits: Commit[]; accentCo
 interface GitCommitFeedProps {
   accentColor?: string
   pulseKey?: number
+  githubRepo?: string | null
 }
 
-export default function GitCommitFeed({ accentColor = 'var(--accent-primary)', pulseKey }: GitCommitFeedProps) {
+export default function GitCommitFeed({ accentColor = 'var(--accent-primary)', pulseKey, githubRepo }: GitCommitFeedProps) {
   const [commits, setCommits] = useState<Commit[]>([])
   const [frozen, setFrozen] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -84,8 +85,12 @@ export default function GitCommitFeed({ accentColor = 'var(--accent-primary)', p
   useEffect(() => { frozenRef.current = frozen }, [frozen])
 
   const fetchCommits = useCallback(async () => {
+    if (!githubRepo) {
+      setLoading(false)
+      return
+    }
     try {
-      const res = await fetch('/api/git-log')
+      const res = await fetch(`/api/git-log?repo=${encodeURIComponent(githubRepo)}`)
       const data: Commit[] = await res.json()
       if (!data.length) return
 
@@ -110,7 +115,7 @@ export default function GitCommitFeed({ accentColor = 'var(--accent-primary)', p
     } catch {
       setLoading(false)
     }
-  }, [])
+  }, [githubRepo])
 
   useEffect(() => { fetchCommits() }, [fetchCommits])
 
