@@ -240,8 +240,14 @@ function parseTodo(text) {
 }
 
 function normalizeName(s) {
-  // Strip leading milestone prefixes like "M1 - ", lowercase, strip punctuation
-  return s.replace(/^M\d+\s*[-–—]\s*/i, '').toLowerCase().replace(/[^\w\s]/g, '').trim()
+  // Strip leading milestone prefixes like "M1 - ", parenthetical descriptions,
+  // lowercase, strip punctuation
+  return s
+    .replace(/^M\d+\s*[-–—]\s*/i, '')
+    .replace(/\s*\(.*?\)/g, '')       // strip (parenthetical descriptions)
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '')
+    .trim()
 }
 
 // ---------------------------------------------------------------------------
