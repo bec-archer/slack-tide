@@ -389,6 +389,11 @@ async function main() {
   let featureCount = 0
   const statusCounts = { done: 0, in_progress: 0, planned: 0 }
 
+  // Build a set of normalized scope change names to flag is_scope_creep on features
+  const scopeCreepNames = new Set(
+    (todoData?.scopeChanges || []).map(sc => normalizeName(sc.note))
+  )
+
   for (const ms of specData.milestones) {
     const milestoneId = milestoneIdMap[ms.name]
     if (!milestoneId) continue
@@ -405,16 +410,20 @@ async function main() {
         if (todoStatus) status = todoStatus
       }
 
+      const isScopeCreep = scopeCreepNames.has(normalizeName(feat.name))
+
       const featRow = {
         milestone_id: milestoneId,
         project_id: projectId,
         name: feat.name,
         description: feat.description,
         status,
+        is_scope_creep: isScopeCreep,
       }
 
       if (dryRun) {
-        console.log(`   Feature: would upsert "${feat.name}" (${status})`)
+        const creepTag = isScopeCreep ? ' 🔀' : ''
+        console.log(`   Feature: would upsert "${feat.name}" (${status})${creepTag}`)
       } else {
         const { data: existing } = await supabase
           .from('features')
@@ -424,7 +433,7 @@ async function main() {
           .single()
 
         if (existing) {
-          await supabase.from('features').update({ status, description: feat.description }).eq('id', existing.id)
+          await supabase.from('features').update({ status, description: feat.description, is_scope_creep: isScopeCreep }).eq('id', existing.id)
         } else {
           const { error } = await supabase.from('features').insert(featRow)
           if (error) {
