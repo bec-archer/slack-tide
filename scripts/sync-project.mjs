@@ -212,13 +212,34 @@ function parseTodo(text) {
     }
 
     // Scope change entries
+    // Supports both formats:
+    //   - 2026-03-24: Feature name
+    //   - ⬜ Feature name — *added 2026-03-24*
+    //   - Feature name — *added 2026-03-24*
     if (inScopeChanges && /^- /.test(trimmed)) {
-      const entry = trimmed.replace(/^- /, '').trim()
-      const dateMatch = entry.match(/^(\d{4}-\d{2}-\d{2}):\s*(.+)/)
-      scopeChanges.push({
-        date: dateMatch ? dateMatch[1] : null,
-        note: dateMatch ? dateMatch[2].trim() : entry,
-      })
+      let entry = trimmed.replace(/^- /, '').trim()
+      // Strip leading status emoji (⬜/🔧/✅)
+      entry = entry.replace(/^[⬜🔧✅]\s*/, '')
+      // Try prefix date format: "2026-03-24: Feature name"
+      const prefixDateMatch = entry.match(/^(\d{4}-\d{2}-\d{2}):\s*(.+)/)
+      // Try suffix date format: "Feature name — *added 2026-03-24*"
+      const suffixDateMatch = entry.match(/^(.+?)\s*—\s*\*added\s+(\d{4}-\d{2}-\d{2})\*$/)
+      if (prefixDateMatch) {
+        scopeChanges.push({
+          date: prefixDateMatch[1],
+          note: prefixDateMatch[2].trim(),
+        })
+      } else if (suffixDateMatch) {
+        scopeChanges.push({
+          date: suffixDateMatch[2],
+          note: suffixDateMatch[1].trim(),
+        })
+      } else {
+        scopeChanges.push({
+          date: null,
+          note: entry,
+        })
+      }
       continue
     }
 
