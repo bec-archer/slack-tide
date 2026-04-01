@@ -14,6 +14,7 @@ import MilestoneCard from '@/components/dashboard/MilestoneCard'
 import FeatureRow from '@/components/dashboard/FeatureRow'
 import ScopeLogTimeline from '@/components/dashboard/ScopeLogTimeline'
 import AddMilestoneForm from '@/components/dashboard/AddMilestoneForm'
+import CollapsibleSection from '@/components/dashboard/CollapsibleSection'
 import GitCommitFeed from '@/components/dashboard/GitCommitFeed'
 import InfraHealth from '@/components/dashboard/InfraHealth'
 
@@ -160,12 +161,22 @@ export default function ProjectDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 items-start">
         {/* Left column */}
         <div className="space-y-8">
-          <BurnUpChart scopeLog={scopeLog} accentColor={project.color} />
+          <CollapsibleSection title="Burn-Up" defaultOpen>
+            <BurnUpChart scopeLog={scopeLog} accentColor={project.color} />
+          </CollapsibleSection>
 
-          <section>
-            <h2 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-4">
-              Milestones
-            </h2>
+          <CollapsibleSection
+            title="Milestones"
+            defaultOpen
+            badge={
+              <span
+                className="text-[10px] text-text-tertiary px-1.5 py-0.5 rounded-full bg-bg-tertiary"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                {sortedMilestones.length}
+              </span>
+            }
+          >
             <div className="space-y-4">
               {sortedMilestones.length === 0 ? (
                 <p className="text-text-tertiary text-sm">No milestones yet.</p>
@@ -207,16 +218,24 @@ export default function ProjectDashboardPage() {
                 </div>
               )}
             </div>
-          </section>
+          </CollapsibleSection>
 
-          <section>
-            <h2 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-4">
-              Scope Log
-            </h2>
+          <CollapsibleSection
+            title="Scope Log"
+            defaultOpen={false}
+            badge={
+              <span
+                className="text-[10px] text-text-tertiary px-1.5 py-0.5 rounded-full bg-bg-tertiary"
+                style={{ fontFamily: 'var(--font-mono)' }}
+              >
+                {scopeLog.length}
+              </span>
+            }
+          >
             <div className="card-static">
               <ScopeLogTimeline entries={scopeLog} />
             </div>
-          </section>
+          </CollapsibleSection>
         </div>
 
         {/* Right column — sticky commit feed + infra health */}

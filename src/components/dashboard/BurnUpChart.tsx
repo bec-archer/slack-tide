@@ -59,10 +59,7 @@ export default function BurnUpChart({ scopeLog, accentColor }: BurnUpChartProps)
   const uniqueDays = new Set(data.map((d) => d.date)).size
 
   return (
-    <section className="mb-6">
-      <h2 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">
-        Burn-Up
-      </h2>
+    <div>
       <div className="bg-bg-secondary border border-border-subtle rounded-xl p-4">
         {uniqueDays < 2 ? (
           <div className="h-[140px] flex items-center justify-center">
@@ -122,6 +119,6 @@ export default function BurnUpChart({ scopeLog, accentColor }: BurnUpChartProps)
           </ResponsiveContainer>
         )}
       </div>
-    </section>
+    </div>
   )
 }

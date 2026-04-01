@@ -427,18 +427,49 @@ async function main() {
       } else {
         const { data: existing } = await supabase
           .from('features')
-          .select('id')
+          .select('id, status')
           .eq('milestone_id', milestoneId)
           .eq('name', feat.name)
           .single()
 
         if (existing) {
+          const oldStatus = existing.status
           await supabase.from('features').update({ status, description: feat.description, is_scope_creep: isScopeCreep }).eq('id', existing.id)
+
+          // Log status change to scope_log for burnup chart tracking
+          if (oldStatus !== status) {
+            const { error: logError } = await supabase.from('scope_log').insert({
+              project_id: projectId,
+              feature_id: existing.id,
+              action: 'feature_status_changed',
+              description: `Feature "${feat.name}": ${oldStatus} → ${status}`,
+              old_value: oldStatus,
+              new_value: status,
+            })
+            if (logError) {
+              console.error(`   Scope log failed for "${feat.name}":`, logError.message)
+            } else {
+              console.log(`   📊 Status change logged: "${feat.name}" ${oldStatus} → ${status}`)
+            }
+          }
         } else {
-          const { error } = await supabase.from('features').insert(featRow)
+          const { data: inserted, error } = await supabase.from('features').insert(featRow).select('id').single()
           if (error) {
             console.error(`   Feature insert failed for "${feat.name}":`, error.message)
             continue
+          }
+
+          // Log new feature to scope_log for burnup chart tracking
+          const { error: logError } = await supabase.from('scope_log').insert({
+            project_id: projectId,
+            feature_id: inserted?.id || null,
+            action: 'feature_added',
+            description: `Feature added: "${feat.name}"`,
+            old_value: null,
+            new_value: status,
+          })
+          if (logError) {
+            console.error(`   Scope log failed for new "${feat.name}":`, logError.message)
           }
         }
       }
