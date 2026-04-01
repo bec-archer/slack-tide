@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { createBrowserClient } from '@/lib/supabase'
 import type { Milestone, Feature, MilestoneStatus } from '@/lib/dashboard-types'
 import InlineEdit from './InlineEdit'
@@ -45,32 +45,6 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
 
   // Auto-collapse completed milestones
   const [open, setOpen] = useState(progress < 100)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [height, setHeight] = useState<number | 'auto'>(progress < 100 ? 'auto' : 0)
-  const isFirstRender = useRef(true)
-
-  useEffect(() => {
-    if (!contentRef.current) return
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      setHeight(open ? 'auto' : 0)
-      return
-    }
-    if (open) {
-      const h = contentRef.current.scrollHeight
-      setHeight(h)
-      const t = setTimeout(() => setHeight('auto'), 300)
-      return () => clearTimeout(t)
-    } else {
-      const el = contentRef.current
-      setHeight(el.scrollHeight)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setHeight(0)
-        })
-      })
-    }
-  }, [open])
 
   async function updateName(name: string) {
     await supabase.from('milestones').update({ name }).eq('id', milestone.id)
@@ -158,11 +132,7 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
           </span>
         </button>
       </div>
-      <div
-        ref={contentRef}
-        className="overflow-hidden transition-[height] duration-300 ease-in-out"
-        style={{ height: typeof height === 'number' ? `${height}px` : 'auto' }}
-      >
+      {open && (
         <div className="border-t border-border-subtle px-3 py-2">
           {sortedFeatures.length === 0 ? (
             <p className="text-sm text-text-tertiary py-2 px-2">No features yet.</p>
@@ -187,7 +157,7 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   )
 }
