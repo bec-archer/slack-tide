@@ -34,12 +34,19 @@ export default function CollapsibleSection({
     if (open) {
       const h = contentRef.current.scrollHeight
       setHeight(h)
-      const t = setTimeout(() => setHeight('auto'), 250)
+      const t = setTimeout(() => setHeight('auto'), 300)
       return () => clearTimeout(t)
     } else {
-      // Set explicit height first so transition works
-      setHeight(contentRef.current.scrollHeight)
-      requestAnimationFrame(() => setHeight(0))
+      // Set explicit height first, force reflow, then collapse to 0
+      const el = contentRef.current
+      setHeight(el.scrollHeight)
+      // Double-rAF ensures the browser paints the explicit height
+      // before we transition to 0 (single rAF gets batched by React)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setHeight(0)
+        })
+      })
     }
   }, [open])
 
@@ -76,7 +83,7 @@ export default function CollapsibleSection({
       </button>
       <div
         ref={contentRef}
-        className="overflow-hidden transition-[height] duration-250 ease-in-out"
+        className="overflow-hidden transition-[height] duration-300 ease-in-out"
         style={{ height: typeof height === 'number' ? `${height}px` : 'auto' }}
       >
         {children}

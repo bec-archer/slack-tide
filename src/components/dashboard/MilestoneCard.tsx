@@ -59,11 +59,16 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
     if (open) {
       const h = contentRef.current.scrollHeight
       setHeight(h)
-      const t = setTimeout(() => setHeight('auto'), 250)
+      const t = setTimeout(() => setHeight('auto'), 300)
       return () => clearTimeout(t)
     } else {
-      setHeight(contentRef.current.scrollHeight)
-      requestAnimationFrame(() => setHeight(0))
+      const el = contentRef.current
+      setHeight(el.scrollHeight)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setHeight(0)
+        })
+      })
     }
   }, [open])
 
@@ -155,7 +160,7 @@ export default function MilestoneCard({ milestone, features, projectColor, isAdm
       </div>
       <div
         ref={contentRef}
-        className="overflow-hidden transition-[height] duration-250 ease-in-out"
+        className="overflow-hidden transition-[height] duration-300 ease-in-out"
         style={{ height: typeof height === 'number' ? `${height}px` : 'auto' }}
       >
         <div className="border-t border-border-subtle px-3 py-2">
