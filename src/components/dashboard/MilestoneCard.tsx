@@ -41,7 +41,11 @@ interface MilestoneCardProps {
 export default function MilestoneCard({ milestone, features, projectColor, isAdmin, onRefresh }: MilestoneCardProps) {
   const supabase = createBrowserClient()
   const progress = computeProgress(features)
-  const sortedFeatures = [...features].sort((a, b) => a.sort_order - b.sort_order)
+  const statusWeight = (s: string) => (s === 'done' || s === 'shipped' || s === 'cut') ? 1 : 0
+  const sortedFeatures = [...features].sort((a, b) => {
+    const sw = statusWeight(a.status) - statusWeight(b.status)
+    return sw !== 0 ? sw : a.sort_order - b.sort_order
+  })
 
   // Auto-collapse completed milestones
   const [open, setOpen] = useState(progress < 100)
