@@ -60,7 +60,7 @@ export default function ProjectDashboardPage() {
         .select('*')
         .eq('project_id', projectData.id)
         .order('created_at', { ascending: false })
-        .limit(50),
+        .limit(2000),
     ])
 
     setMilestones(milestonesRes.data || [])
