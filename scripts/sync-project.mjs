@@ -185,6 +185,8 @@ function parseSpec(text) {
 function parseTodo(text) {
   const lines = text.split('\n')
   const statusByMilestone = {} // { normalizedMilestoneName: { normalizedFeatureName: status } }
+  const priorityByFeature = {} // { normalizedSectionName: { normalizedFeatureName: priority } }
+  const sectionPriority = {}   // { normalizedSectionName: 'high' | 'low' | 'medium' }
   const scopeChanges = []
   let currentSection = null
   let inScopeChanges = false
@@ -208,6 +210,18 @@ function parseTodo(text) {
       inScopeChanges = false
       currentSection = normalizeName(heading)
       if (!statusByMilestone[currentSection]) statusByMilestone[currentSection] = {}
+      if (!priorityByFeature[currentSection]) priorityByFeature[currentSection] = {}
+      continue
+    }
+
+    // Section-level priority from blockquote emojis:
+    //   🚨 or 🚨🔒 → high  |  🔥 → high  |  🔽 → low
+    if (currentSection && /^>/.test(trimmed)) {
+      if (/🚨/.test(trimmed) || /🔥/.test(trimmed)) {
+        sectionPriority[currentSection] = 'high'
+      } else if (/🔽/.test(trimmed)) {
+        sectionPriority[currentSection] = 'low'
+      }
       continue
     }
 
@@ -248,16 +262,30 @@ function parseTodo(text) {
       const statusMatch = trimmed.match(/^- (✅|🔧|⬜)\s*(.+)/)
       if (statusMatch) {
         const emoji = statusMatch[1]
-        const featureName = normalizeName(statusMatch[2].trim())
+        let featureText = statusMatch[2].trim()
+
+        // Check for inline priority tag: *(low priority)* or *(high priority)*
+        let featurePriority = null
+        const priorityTagMatch = featureText.match(/\s*\*\((low|high)\s+priority\)\*\s*$/i)
+        if (priorityTagMatch) {
+          featurePriority = priorityTagMatch[1].toLowerCase()
+          featureText = featureText.slice(0, -priorityTagMatch[0].length).trim()
+        }
+
+        const featureName = normalizeName(featureText)
         let status = 'planned'
         if (emoji === '✅') status = 'done'
         else if (emoji === '🔧') status = 'in_progress'
         statusByMilestone[currentSection][featureName] = status
+
+        if (featurePriority) {
+          priorityByFeature[currentSection][featureName] = featurePriority
+        }
       }
     }
   }
 
-  return { statusByMilestone, scopeChanges }
+  return { statusByMilestone, priorityByFeature, sectionPriority, scopeChanges }
 }
 
 function normalizeName(s) {
@@ -410,6 +438,18 @@ async function main() {
         if (todoStatus) status = todoStatus
       }
 
+      // Determine priority: per-feature tag > section blockquote > default "medium"
+      let priority = 'medium'
+      if (todoData) {
+        if (todoData.sectionPriority[normalizedMs]) {
+          priority = todoData.sectionPriority[normalizedMs]
+        }
+        const featPriority = todoData.priorityByFeature[normalizedMs]?.[normalizeName(feat.name)]
+        if (featPriority) {
+          priority = featPriority
+        }
+      }
+
       const isScopeCreep = scopeCreepNames.has(normalizeName(feat.name))
 
       const featRow = {
@@ -418,23 +458,29 @@ async function main() {
         name: feat.name,
         description: feat.description,
         status,
+        priority,
         is_scope_creep: isScopeCreep,
       }
 
       if (dryRun) {
         const creepTag = isScopeCreep ? ' 🔀' : ''
-        console.log(`   Feature: would upsert "${feat.name}" (${status})${creepTag}`)
+        const prioTag = priority !== 'medium' ? ` [${priority}]` : ''
+        console.log(`   Feature: would upsert "${feat.name}" (${status})${prioTag}${creepTag}`)
       } else {
-        const { data: existing } = await supabase
+        // Use .limit(2) instead of .single() so that if duplicates somehow exist,
+        // we still find and update the first one rather than falling through to INSERT
+        // (which is what caused the runaway duplicate bug — .single() returns null for 2+ rows).
+        const { data: existingRows } = await supabase
           .from('features')
           .select('id, status')
           .eq('milestone_id', milestoneId)
           .eq('name', feat.name)
-          .single()
+          .limit(2)
+        const existing = existingRows?.[0] ?? null
 
         if (existing) {
           const oldStatus = existing.status
-          await supabase.from('features').update({ status, description: feat.description, is_scope_creep: isScopeCreep }).eq('id', existing.id)
+          await supabase.from('features').update({ status, priority, description: feat.description, is_scope_creep: isScopeCreep }).eq('id', existing.id)
 
           // Log status change to scope_log for burnup chart tracking
           if (oldStatus !== status) {
