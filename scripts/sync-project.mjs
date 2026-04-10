@@ -69,6 +69,20 @@ const specFiles = config.spec_files || ['SPEC.md']
 const todoFile = config.todo_file || 'PROJECT_TODO.md'
 
 // ---------------------------------------------------------------------------
+// Helper: find ' — ' separator OUTSIDE of parentheses
+// Prevents splitting inside descriptions like "Feature (detail — note)"
+// ---------------------------------------------------------------------------
+function findDescSep(text) {
+  let depth = 0
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '(') depth++
+    else if (text[i] === ')') depth--
+    else if (depth === 0 && text.slice(i, i + 3) === ' — ') return i
+  }
+  return -1
+}
+
+// ---------------------------------------------------------------------------
 // SPEC.md parser
 // ---------------------------------------------------------------------------
 function parseSpec(text) {
@@ -161,10 +175,22 @@ function parseSpec(text) {
     if (inFeatures && /^- /.test(trimmed)) {
       const checkboxMatch = trimmed.match(/^- \[([ xX])\]\s*(.+)/)
       const plainMatch = !checkboxMatch && trimmed.match(/^- (.+)/)
-      const fullText = checkboxMatch ? checkboxMatch[2].trim() : plainMatch ? plainMatch[1].trim() : null
+      let fullText = checkboxMatch ? checkboxMatch[2].trim() : plainMatch ? plainMatch[1].trim() : null
       if (fullText) {
-        const checked = checkboxMatch ? checkboxMatch[1].toLowerCase() === 'x' : false
-        const sepIndex = fullText.indexOf(' — ')
+        let checked = checkboxMatch ? checkboxMatch[1].toLowerCase() === 'x' : false
+
+        // Handle emoji status prefixes (✅ = done, 🔧 = in_progress, ⬜ = planned/not started)
+        // Strip them from the feature name so they don't pollute stored names.
+        const emojiMatch = fullText.match(/^([✅🔧⬜])\s*(.+)/)
+        if (emojiMatch) {
+          if (emojiMatch[1] === '✅') checked = true
+          fullText = emojiMatch[2].trim()
+        }
+
+        // Find ' — ' separator OUTSIDE of parentheses so that descriptions like
+        // "Feature (detail — more detail)" don't get split at the wrong point,
+        // which would leave a truncated unclosed '(' in the stored feature name.
+        const sepIndex = findDescSep(fullText)
         const name = sepIndex >= 0 ? fullText.slice(0, sepIndex).trim() : fullText
         const description = sepIndex >= 0 ? fullText.slice(sepIndex + 3).trim() : null
         currentMilestone.features.push({
@@ -272,7 +298,12 @@ function parseTodo(text) {
           featureText = featureText.slice(0, -priorityTagMatch[0].length).trim()
         }
 
-        const featureName = normalizeName(featureText)
+        // Strip ' — ' description suffix before normalizing, matching spec parser behavior.
+        // Without this, TODO entries like "Feature (parens) — verbose description" normalize
+        // to a longer string than the spec's "Feature (parens)" and the join fails.
+        const descSep = findDescSep(featureText)
+        const featureNameRaw = descSep >= 0 ? featureText.slice(0, descSep).trim() : featureText
+        const featureName = normalizeName(featureNameRaw)
         let status = 'planned'
         if (emoji === '✅') status = 'done'
         else if (emoji === '🔧') status = 'in_progress'
@@ -305,14 +336,32 @@ function normalizeName(s) {
 async function main() {
   const prefix = dryRun ? '[DRY RUN] ' : ''
 
-  // Read and parse SPEC files
+  // Read and parse ALL spec files, merging milestones from each.
+  // The first file that exists provides the project name/slug/status;
+  // subsequent files contribute their milestones. When the same milestone
+  // name appears in multiple specs, the LATER occurrence wins (detail specs
+  // like Strategy_Control_Reporting_Spec.md are listed after the system spec
+  // and carry the authoritative status + feature list for their milestones).
   let specData = null
   for (const specFile of specFiles) {
     const specPath = join(projectPath, specFile)
-    if (existsSync(specPath)) {
-      const text = readFileSync(specPath, 'utf-8')
-      specData = parseSpec(text)
-      break
+    if (!existsSync(specPath)) continue
+    const text = readFileSync(specPath, 'utf-8')
+    const parsed = parseSpec(text)
+    if (!specData) {
+      specData = parsed
+    } else {
+      // Deduplicate: later file wins for same-named milestone
+      for (const ms of parsed.milestones) {
+        const existingIdx = specData.milestones.findIndex(
+          m => m.name.toLowerCase() === ms.name.toLowerCase()
+        )
+        if (existingIdx >= 0) {
+          specData.milestones[existingIdx] = ms
+        } else {
+          specData.milestones.push(ms)
+        }
+      }
     }
   }
 
