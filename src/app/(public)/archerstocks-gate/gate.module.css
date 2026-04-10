@@ -1,0 +1,112 @@
+.page {
+  min-height: 100vh;
+  background: #0a0c0e;
+  color: #e8ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  font-family: var(--font-plus-jakarta, "Plus Jakarta Sans", -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+.card {
+  max-width: 420px;
+  width: 100%;
+  padding: 44px 40px;
+  background: #13171a;
+  border: 1px solid #242a2f;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4ade80;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin: 0 0 10px;
+  color: #e8ecef;
+}
+
+.subtitle {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #9aa2a8;
+  margin: 0 0 32px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  background: #0a0c0e;
+  border: 1px solid #2e353b;
+  border-radius: 10px;
+  color: #e8ecef;
+  font-size: 16px;
+  font-family: var(--font-ibm-plex-mono, "IBM Plex Mono", monospace);
+  letter-spacing: 0.15em;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #5a6066;
+  letter-spacing: 0.05em;
+}
+
+.input:focus {
+  border-color: #4ade80;
+  background: #0d1012;
+}
+
+.button {
+  padding: 14px 16px;
+  background: #4ade80;
+  color: #0a0c0e;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.error {
+  font-size: 13px;
+  color: #f87171;
+  margin: 4px 0 0;
+  font-weight: 500;
+}
