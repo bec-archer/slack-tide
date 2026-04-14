@@ -1,0 +1,262 @@
+/* Gap Log — Observability dashboard styles
+   Inherits palette from archerstocks.module.css via CSS vars on .page */
+
+.section {
+  margin-bottom: 48px;
+}
+
+.sectionTitle {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0 0 8px;
+  color: var(--as-text);
+}
+
+.sectionDesc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--as-text-2);
+  margin: 0 0 20px;
+}
+
+/* ---------- Lookup form ---------- */
+.lookupForm {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .lookupForm {
+    flex-direction: column;
+  }
+}
+
+.input {
+  padding: 10px 14px;
+  background: var(--as-surface);
+  border: 1px solid var(--as-border);
+  border-radius: 8px;
+  color: var(--as-text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--as-accent-dim);
+}
+
+.input::placeholder {
+  color: var(--as-text-3);
+}
+
+/* Date input color scheme fix for dark mode */
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+.button {
+  padding: 10px 20px;
+  background: var(--as-accent-bg);
+  border: 1px solid var(--as-accent-dim);
+  border-radius: 8px;
+  color: var(--as-accent);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.button:hover:not(:disabled) {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: var(--as-accent);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Trace / Near-miss table ---------- */
+.traceTable {
+  border: 1px solid var(--as-border);
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-x: auto;
+  font-size: 13px;
+}
+
+.traceHeader,
+.nearMissHeader {
+  display: grid;
+  padding: 12px 16px;
+  background: var(--as-surface);
+  border-bottom: 1px solid var(--as-border-strong);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--as-text-2);
+}
+
+.traceHeader {
+  grid-template-columns: 80px 56px 1fr 80px 80px 56px;
+  gap: 12px;
+}
+
+.nearMissHeader {
+  grid-template-columns: 72px 90px 56px 1fr 72px 72px 52px;
+  gap: 12px;
+}
+
+.traceRow {
+  display: grid;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--as-border);
+  align-items: center;
+  color: var(--as-text);
+  transition: background 0.1s ease;
+}
+
+/* Match the parent header's columns */
+.traceTable > .traceHeader + .traceRow,
+.traceTable > .traceRow {
+  grid-template-columns: 80px 56px 1fr 80px 80px 56px;
+  gap: 12px;
+}
+
+/* Near-miss rows use the wider grid */
+.traceTable > .nearMissHeader ~ .traceRow {
+  grid-template-columns: 72px 90px 56px 1fr 72px 72px 52px;
+  gap: 12px;
+}
+
+.traceRow:last-child {
+  border-bottom: none;
+}
+
+.traceRow:hover {
+  background: var(--as-surface-2);
+}
+
+.mono {
+  font-family: var(--font-ibm-plex-mono, "IBM Plex Mono", monospace);
+  font-size: 12px;
+  color: var(--as-text-2);
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-align: center;
+  width: fit-content;
+}
+
+.tag[data-bot="default"] {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+
+.tag[data-bot="scalper"] {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+}
+
+.symbolCell {
+  font-weight: 600;
+  color: var(--as-text);
+}
+
+.passedBadge {
+  font-family: var(--font-ibm-plex-mono, "IBM Plex Mono", monospace);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--as-warn);
+  text-align: center;
+}
+
+/* ---------- Histogram ---------- */
+.histogram {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.histRow {
+  display: grid;
+  grid-template-columns: 160px 1fr 48px;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .histRow {
+    grid-template-columns: 120px 1fr 40px;
+  }
+}
+
+.histLabel {
+  font-size: 13px;
+  color: var(--as-text-2);
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.histBarWrap {
+  height: 24px;
+  background: var(--as-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.histBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--as-accent-dim), var(--as-accent));
+  border-radius: 4px;
+  min-width: 4px;
+  transition: width 0.3s ease;
+}
+
+.histCount {
+  font-family: var(--font-ibm-plex-mono, "IBM Plex Mono", monospace);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--as-text);
+  text-align: right;
+}
+
+/* ---------- Empty / Error states ---------- */
+.empty {
+  padding: 32px 24px;
+  text-align: center;
+  color: var(--as-text-2);
+  font-size: 14px;
+  background: var(--as-surface);
+  border: 1px solid var(--as-border);
+  border-radius: 10px;
+  line-height: 1.6;
+}
+
+.emptyDetail {
+  font-size: 12px;
+  color: var(--as-text-3);
+}
+
+.error {
+  color: var(--as-danger);
+  font-size: 14px;
+  padding: 12px 16px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}

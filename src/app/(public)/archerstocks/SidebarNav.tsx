@@ -12,6 +12,7 @@ type Props = {
 export default function SidebarNav({ reports }: Props) {
   const pathname = usePathname();
   const isHome = pathname === "/archerstocks";
+  const isGapLog = pathname === "/archerstocks/gap-log";
 
   return (
     <nav className={s.sidebar} aria-label="Research navigation">
@@ -21,6 +22,16 @@ export default function SidebarNav({ reports }: Props) {
       >
         <span className={s.sidebarHomeTitle}>ArcherStocks Research</span>
         <span className={s.sidebarHomeSub}>Overview</span>
+      </Link>
+
+      <Link
+        href="/archerstocks/gap-log"
+        className={`${s.sidebarItem} ${isGapLog ? s.sidebarItemActive : ""}`}
+      >
+        <span className={s.sidebarLabel}>
+          <span className={s.sidebarItemTitle}>Gap Log</span>
+          <span className={s.sidebarTag}>Observability</span>
+        </span>
       </Link>
 
       <div className={s.sidebarDivider} />
