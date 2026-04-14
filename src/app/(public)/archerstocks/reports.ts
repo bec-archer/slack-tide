@@ -57,6 +57,15 @@ export const REPORTS: Report[] = [
     file: "05-implementation-guide.md",
     order: 5,
   },
+  {
+    slug: "missed-tickers-2026-04-14",
+    title: "Missed Tickers Investigation — Apr 14, 2026",
+    subtitle:
+      "SKYQ, BBGI, RMSG, and SNAL: why neither bot caught them, and where the real coverage gaps are.",
+    tag: "Investigation",
+    file: "06-missed-tickers-2026-04-14.md",
+    order: 6,
+  },
 ];
 
 const CONTENT_DIR = path.join(process.cwd(), "src/content/archerstocks");

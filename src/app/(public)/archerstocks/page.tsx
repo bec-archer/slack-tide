@@ -9,9 +9,10 @@ export default function ArcherStocksHome() {
         <span className={s.eyebrow}>Research Collection</span>
         <h1 className={s.landingTitle}>ArcherStocks Research</h1>
         <p className={s.landingLede}>
-          A five-part research collection on why trading bots succeed or fail,
-          the strategies that actually work, and how the ArcherStocks bot
-          stacks up against the evidence.
+          A research collection on why trading bots succeed or fail, the
+          strategies that actually work, and how the ArcherStocks bot stacks
+          up against the evidence — plus ongoing investigations into
+          specific coverage gaps as they surface.
         </p>
       </header>
 
