@@ -466,6 +466,10 @@ async function main() {
   let featureCount = 0
   const statusCounts = { done: 0, in_progress: 0, planned: 0 }
 
+  // Track which feature IDs were touched by this sync run so the reconcile
+  // step at the end can delete anything that's no longer in the spec.
+  const seenFeatureIds = new Set()
+
   // Build a set of normalized scope change names to flag is_scope_creep on features
   const scopeCreepNames = new Set(
     (todoData?.scopeChanges || []).map(sc => normalizeName(sc.note))
@@ -515,6 +519,18 @@ async function main() {
         const creepTag = isScopeCreep ? ' 🔀' : ''
         const prioTag = priority !== 'medium' ? ` [${priority}]` : ''
         console.log(`   Feature: would upsert "${feat.name}" (${status})${prioTag}${creepTag}`)
+        // Dry-run also needs to know which features WOULD be touched so the
+        // reconcile preview is accurate — look up the existing ID (if any)
+        // without writing anything.
+        if (milestoneId && milestoneId !== '<new>') {
+          const { data: existingRows } = await supabase
+            .from('features')
+            .select('id')
+            .eq('milestone_id', milestoneId)
+            .eq('name', feat.name)
+            .limit(1)
+          if (existingRows?.[0]?.id) seenFeatureIds.add(existingRows[0].id)
+        }
       } else {
         // Use .limit(2) instead of .single() so that if duplicates somehow exist,
         // we still find and update the first one rather than falling through to INSERT
@@ -528,6 +544,7 @@ async function main() {
         const existing = existingRows?.[0] ?? null
 
         if (existing) {
+          seenFeatureIds.add(existing.id)
           const oldStatus = existing.status
           await supabase.from('features').update({ status, priority, description: feat.description, is_scope_creep: isScopeCreep }).eq('id', existing.id)
 
@@ -553,6 +570,7 @@ async function main() {
             console.error(`   Feature insert failed for "${feat.name}":`, error.message)
             continue
           }
+          if (inserted?.id) seenFeatureIds.add(inserted.id)
 
           // Log new feature to scope_log for burnup chart tracking
           const { error: logError } = await supabase.from('scope_log').insert({
@@ -581,6 +599,68 @@ async function main() {
     console.log(`   Features: ${featureCount} would be upserted (${statusSummary})`)
   } else {
     console.log(`   Features: ${featureCount} upserted (${statusSummary})`)
+  }
+
+  // ---- Reconcile: delete milestones & features no longer in the spec ----
+  // The sync is otherwise write-only — renames and removals accumulate as ghost
+  // rows that show up on the dashboard forever. This step trims anything on
+  // this project that wasn't touched by the current sync run.
+  //
+  // scope_log.feature_id has ON DELETE SET NULL, and features.milestone_id has
+  // ON DELETE CASCADE, so deletions preserve burnup history and clean up
+  // orphaned features automatically.
+  const validMilestoneIds = new Set(Object.values(milestoneIdMap).filter(id => id && id !== '<new>'))
+
+  // Orphan features: belong to a current milestone but weren't in the current spec
+  const { data: allFeatures, error: listFeatErr } = await supabase
+    .from('features')
+    .select('id, name')
+    .eq('project_id', projectId)
+  if (listFeatErr) {
+    console.error(`   Reconcile: could not list features:`, listFeatErr.message)
+  } else {
+    const orphanFeatures = (allFeatures || []).filter(f => !seenFeatureIds.has(f.id))
+    if (orphanFeatures.length === 0) {
+      console.log(`   Reconcile features: 0 orphans (clean ✨)`)
+    } else if (dryRun) {
+      console.log(`   Reconcile features: ${orphanFeatures.length} orphan(s) would be deleted`)
+      for (const f of orphanFeatures) console.log(`     - "${f.name}"`)
+    } else {
+      const ids = orphanFeatures.map(f => f.id)
+      const { error: delErr } = await supabase.from('features').delete().in('id', ids)
+      if (delErr) {
+        console.error(`   Reconcile features: delete failed:`, delErr.message)
+      } else {
+        console.log(`   Reconcile features: ${orphanFeatures.length} orphan(s) deleted`)
+        for (const f of orphanFeatures) console.log(`     - "${f.name}"`)
+      }
+    }
+  }
+
+  // Orphan milestones: exist on this project but weren't in any current spec file
+  const { data: allMilestones, error: listMsErr } = await supabase
+    .from('milestones')
+    .select('id, name')
+    .eq('project_id', projectId)
+  if (listMsErr) {
+    console.error(`   Reconcile: could not list milestones:`, listMsErr.message)
+  } else {
+    const orphanMilestones = (allMilestones || []).filter(m => !validMilestoneIds.has(m.id))
+    if (orphanMilestones.length === 0) {
+      console.log(`   Reconcile milestones: 0 orphans (clean ✨)`)
+    } else if (dryRun) {
+      console.log(`   Reconcile milestones: ${orphanMilestones.length} orphan(s) would be deleted`)
+      for (const m of orphanMilestones) console.log(`     - "${m.name}"`)
+    } else {
+      const ids = orphanMilestones.map(m => m.id)
+      const { error: delErr } = await supabase.from('milestones').delete().in('id', ids)
+      if (delErr) {
+        console.error(`   Reconcile milestones: delete failed:`, delErr.message)
+      } else {
+        console.log(`   Reconcile milestones: ${orphanMilestones.length} orphan(s) deleted (features cascaded)`)
+        for (const m of orphanMilestones) console.log(`     - "${m.name}"`)
+      }
+    }
   }
 
   // ---- Scope log ----

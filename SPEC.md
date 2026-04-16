@@ -26,6 +26,7 @@
 - [x] Sync script — push .md files to Supabase
 - [ ] Sub-project support — parent/child project nesting
 - [x] Git hook — auto-sync on commit
+- [x] Sync reconciliation — sync-project.mjs now tracks every milestone and feature ID it touches each run, then deletes anything on the project that wasn't seen. Eliminates ghost "planned" rows from feature renames and obsolete milestones that used to accumulate forever. Cascade on `features.milestone_id` handles feature cleanup when milestones are dropped; `scope_log.feature_id` is ON DELETE SET NULL so burnup history is preserved. Dry-run does a read-only lookup to preview what would be deleted without writing.
 
 ## Scope Creep
 
