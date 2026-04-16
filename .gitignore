@@ -14,18 +14,61 @@
 # production
 /build
 
-# misc
-.DS_Store
+# env files (hardened)
+.env
+.env.*
+.env*.local
+.env*.save
+.env*.save.*
+!.env.example
+!.env.sample
+
+# editor backups & swap files
+*.save
+*.save.*
+*.bak
+*.backup
+*.orig
+*~
+*.swp
+*.swo
+*.swn
+.*.swp
+.*.swo
+.#*
+\#*\#
+
+# secrets / keys
 *.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*service-account*.json
+*serviceAccount*.json
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Supabase CLI state
+supabase/.temp/
+supabase/.branches/
+
+# Claude Code local config
+.claude/
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# env files
-.env*.local
 
 # vercel
 .vercel
